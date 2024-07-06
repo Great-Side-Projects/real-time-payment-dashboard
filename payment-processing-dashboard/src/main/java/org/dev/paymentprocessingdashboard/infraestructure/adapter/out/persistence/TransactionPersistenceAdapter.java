@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @PersistenceAdapter
@@ -64,7 +65,7 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
             spec = spec.and(TransactionSpecification.hasAmountBetween(minAmount, maxAmount));
         }
         if (transactionId != null && !transactionId.isEmpty()) {
-            spec = spec.and(TransactionSpecification.hasTransactionId(transactionId));
+            spec = spec.and(TransactionSpecification.hasTransactionId(UUID.fromString(transactionId)));
         }
         if (size > PAGE_SIZE)
             size = PAGE_SIZE;
