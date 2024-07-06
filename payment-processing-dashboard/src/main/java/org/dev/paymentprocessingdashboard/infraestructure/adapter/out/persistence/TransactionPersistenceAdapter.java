@@ -4,6 +4,10 @@ import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersi
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
 import org.dev.paymentprocessingdashboard.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +15,7 @@ import java.util.stream.Collectors;
 @PersistenceAdapter
 public class TransactionPersistenceAdapter implements ITransactionPersistencePort {
     private final ITransactionRepository transactionRepository;
+    private static final int PAGE_SIZE = 100;
 
     public TransactionPersistenceAdapter(ITransactionRepository urlRepository, ITransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
@@ -43,5 +48,28 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
                                                                             .map(TransactionMapper::toTransactionPerMinuteSummary)
                                                                             .collect(Collectors.toList());
         return new TotalTransactionPerMinuteSummary(totalTransactionPerMinuteSummary);
+    }
+
+    @Override
+    public Page<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
+        Specification<TransactionEntity> spec = Specification.where(null);
+
+        if (status != null && !status.isEmpty()) {
+            spec = spec.and(TransactionSpecification.hasStatus(status));
+        }
+        if (userId != null && !userId.isEmpty()) {
+            spec = spec.and(TransactionSpecification.hasUserId(userId));
+        }
+        if (minAmount != null && maxAmount != null) {
+            spec = spec.and(TransactionSpecification.hasAmountBetween(minAmount, maxAmount));
+        }
+        if (transactionId != null && !transactionId.isEmpty()) {
+            spec = spec.and(TransactionSpecification.hasTransactionId(transactionId));
+        }
+        if (size > PAGE_SIZE)
+            size = PAGE_SIZE;
+        Pageable pageable = PageRequest.of(page, size);
+        return transactionRepository.findAll(spec, pageable)
+                .map(TransactionMapper::toTransaction);
     }
 }

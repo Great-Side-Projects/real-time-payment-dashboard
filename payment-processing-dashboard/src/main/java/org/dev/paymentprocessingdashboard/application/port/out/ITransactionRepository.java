@@ -3,13 +3,15 @@ package org.dev.paymentprocessingdashboard.application.port.out;
 import org.dev.paymentprocessingdashboard.domain.TransactionPerMinuteSummaryProjection;
 import org.dev.paymentprocessingdashboard.domain.TransactionSummaryProjection;
 import org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence.TransactionEntity;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface ITransactionRepository extends CrudRepository<TransactionEntity, UUID>{
+public interface ITransactionRepository extends CrudRepository<TransactionEntity, UUID>, JpaSpecificationExecutor<TransactionEntity>, PagingAndSortingRepository<TransactionEntity, UUID> {
     @Query(value = """
             SELECT 
             SUM(t.amount) as totalAmount, 
