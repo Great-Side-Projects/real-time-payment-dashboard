@@ -12,7 +12,7 @@ public class TransactionMapper {
     public static TransactionEntity toTransactionEntity(Transaction transaction) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(UUID.fromString(transaction.getId()));
-        transactionEntity.setUser(transaction.getUser());
+        transactionEntity.setUserid(transaction.getUserid());
         transactionEntity.setAmount(transaction.getAmount());
         transactionEntity.setStatus(transaction.getStatus());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -25,7 +25,7 @@ public class TransactionMapper {
     public static Transaction toTransaction(TransactionEntity transactionEntity) {
         Transaction transaction = new Transaction(
                 transactionEntity.getId().toString(),
-                transactionEntity.getUser(),
+                transactionEntity.getUserid(),
                 transactionEntity.getAmount(),
                 transactionEntity.getStatus(),
                 transactionEntity.getTimestamp().toString(),

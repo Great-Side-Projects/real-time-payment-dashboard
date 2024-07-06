@@ -5,7 +5,7 @@ public interface TransactionSummaryProjection {
     double getTotalAmount();
     long getTotalSuccess();
     long getTotalFailed();
-    String getUser();
+    String getUserId();
     long getTotalTransactions();
 }
 

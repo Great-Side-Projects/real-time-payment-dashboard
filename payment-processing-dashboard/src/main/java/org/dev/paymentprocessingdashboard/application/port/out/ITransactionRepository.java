@@ -15,10 +15,10 @@ public interface ITransactionRepository extends CrudRepository<TransactionEntity
             SUM(t.amount) as totalAmount, 
             SUM(CASE WHEN t.status = 'success' THEN 1 ELSE 0 END) as totalSuccess, 
             SUM(CASE WHEN t.status = 'failure' THEN 1 ELSE 0 END) as totalFailed, 
-            t.user as user, 
+            t.userid as userid, 
             COUNT(t.id) as totalTransactions 
             FROM transaction_entity t 
-            GROUP BY t.user""",
+            GROUP BY t.userid""",
             nativeQuery = true)
     List<TransactionSummaryProjection> findTransactionSummary();
 

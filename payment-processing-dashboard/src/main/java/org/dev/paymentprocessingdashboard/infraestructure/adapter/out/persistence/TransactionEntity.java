@@ -16,7 +16,7 @@ public class TransactionEntity {
     @SequenceGenerator(name = "seqGen", sequenceName = "seq_transaction", initialValue = 1)
     private long rowid;
     private UUID id;
-    private String user;
+    private String userid;
     private double amount;
     private String status;
     private LocalDateTime timestamp;

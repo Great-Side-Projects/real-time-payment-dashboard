@@ -22,7 +22,7 @@ public class TotalTransactionSummary {
         this.totalSuccessTransactions = transactionSumaries.stream().mapToLong(TransactionSummaryProjection::getTotalSuccess).sum();
         this.totalFailedTransactions = transactionSumaries.stream().mapToLong(TransactionSummaryProjection::getTotalFailed).sum();
         this.totalTransactionsPerUser = transactionSumaries.stream()
-                .map(transactionSumary -> "User " + transactionSumary.getUser() + ": Total transactions: " + transactionSumary.getTotalTransactions())
+                .map(transactionSumary -> "Userid " + transactionSumary.getUserId() + ": Total transactions: " + transactionSumary.getTotalTransactions())
                 .reduce((s1, s2) -> s1 + ", " + s2).orElse("No transactions");
     }
 

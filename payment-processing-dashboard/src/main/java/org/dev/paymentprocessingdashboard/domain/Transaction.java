@@ -2,15 +2,15 @@ package org.dev.paymentprocessingdashboard.domain;
 
 public class Transaction {
     private String id;
-    private String user;
+    private String userid;
     private double amount;
     private String status;
     private String timestamp;
     private String location;
 
-    public Transaction(String id, String user, double amount, String status, String timestamp, String location) {
+    public Transaction(String id, String userid, double amount, String status, String timestamp, String location) {
         this.id = id;
-        this.user = user;
+        this.userid = userid;
         this.amount = amount;
         this.status = status;
         this.timestamp = timestamp;
@@ -21,8 +21,8 @@ public class Transaction {
         return id;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserid() {
+        return userid;
     }
 
     public double getAmount() {
@@ -45,7 +45,7 @@ public class Transaction {
     public String toString() {
         return "Transaction {" +
                 "id='" + id + '\'' +
-                ", user='" + user + '\'' +
+                ", userid='" + userid + '\'' +
                 ", amount=" + amount +
                 ", status='" + status + '\'' +
                 ", timestamp='" + timestamp + '\'' +
