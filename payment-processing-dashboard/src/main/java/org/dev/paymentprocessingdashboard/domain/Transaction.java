@@ -1,5 +1,7 @@
 package org.dev.paymentprocessingdashboard.domain;
 
+import org.dev.paymentprocessingdashboard.application.port.ITransactionFormatProviderPort;
+
 public class Transaction {
     private String id;
     private String userid;
@@ -7,6 +9,7 @@ public class Transaction {
     private String status;
     private String timestamp;
     private String location;
+
 
     public Transaction(String id, String userid, double amount, String status, String timestamp, String location) {
         this.id = id;
@@ -51,5 +54,8 @@ public class Transaction {
                 ", timestamp='" + timestamp + '\'' +
                 ", location='" + location + '\'' +
                 '}';
+    }
+    public static Transaction processLine(String line, ITransactionFormatProviderPort transactionFormatProviderPort){
+        return transactionFormatProviderPort.getTransactionFromLine(line);
     }
 }
