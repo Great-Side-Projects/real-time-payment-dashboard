@@ -33,18 +33,21 @@ public class LogReaderService {
     }
 
     @Scheduled(fixedRate = 500) // Cada 1 segundos
-    public void readLogFile() throws IOException {
+    public List<Transaction> readLogFile() throws IOException {
 
+        //Todo: read file with relative path
         try (RandomAccessFile file = new RandomAccessFile(path.toFile(), "r")) {
             file.seek(lastKnownPosition);
             String line;
             List<Transaction> transactions = new ArrayList<>();
             while ((line = file.readLine()) != null) {
+                //Todo: processline in a separate thread to improve performance and the concert is by Transaction object, order by arrive line
                 Transaction transaction = processLine(line);
                 transactions.add(transaction);
             }
             if (transactions.isEmpty()) {
-                return;
+                //ahother way to return transactions empty
+                return List.of();
             }
             transactionPersistenceAdapter.saveAll(transactions);
             transactions.forEach(transaction -> {
@@ -58,9 +61,10 @@ public class LogReaderService {
                 }
             });
 
-           System.out.println(ANSIRESET+transactionPersistenceAdapter.TotalTransactionSummary());
-           System.out.println(transactionPersistenceAdapter.SummaryTransactionsPerMinute());
+           System.out.println(ANSIRESET+transactionPersistenceAdapter.totalTransactionSummary());
+           System.out.println(transactionPersistenceAdapter.summaryTransactionsPerMinute());
            lastKnownPosition = file.getFilePointer();
+           return transactions;
         }
     }
 
