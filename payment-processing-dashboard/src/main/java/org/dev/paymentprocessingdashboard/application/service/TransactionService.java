@@ -17,9 +17,7 @@ public class TransactionService implements ITransactionServicePort {
 
     @Override
     public Page<Transaction> filterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
-        //validation logic
-
-
+        //validation Business Logic
         return transactionPersistenceAdapter.findAll(status, userId, minAmount, maxAmount, transactionId, page, size);
     }
 }

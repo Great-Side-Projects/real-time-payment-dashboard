@@ -12,7 +12,7 @@ public class TransactionMapper {
     public static TransactionEntity toTransactionEntity(Transaction transaction) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(UUID.fromString(transaction.getId()));
-        transactionEntity.setUserid(transaction.getUserid());
+        transactionEntity.setUserid(transaction.getUserId());
         transactionEntity.setAmount(transaction.getAmount());
         transactionEntity.setStatus(transaction.getStatus());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");

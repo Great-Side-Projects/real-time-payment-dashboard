@@ -11,7 +11,7 @@ import java.util.List;
 public interface ITransactionPersistencePort {
     Transaction save(Transaction transaction);
     void saveAll(List<Transaction> transactions);
-    TotalTransactionSummary TotalTransactionSummary();
-    TotalTransactionPerMinuteSummary SummaryTransactionsPerMinute();
+    TotalTransactionSummary totalTransactionSummary();
+    TotalTransactionPerMinuteSummary summaryTransactionsPerMinute();
     Page<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size);
 }

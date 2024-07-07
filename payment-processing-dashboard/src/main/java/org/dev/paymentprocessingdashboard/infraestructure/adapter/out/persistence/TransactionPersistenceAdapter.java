@@ -18,7 +18,7 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     private final ITransactionRepository transactionRepository;
     private static final int PAGE_SIZE = 100;
 
-    public TransactionPersistenceAdapter(ITransactionRepository urlRepository, ITransactionRepository transactionRepository) {
+    public TransactionPersistenceAdapter(ITransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -37,13 +37,13 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     }
 
     @Override
-    public TotalTransactionSummary TotalTransactionSummary() {
+    public TotalTransactionSummary totalTransactionSummary() {
         TotalTransactionSummary totalTransactionSummary = new TotalTransactionSummary(transactionRepository.findTransactionSummary());
         return totalTransactionSummary;
     }
 
     @Override
-    public TotalTransactionPerMinuteSummary SummaryTransactionsPerMinute() {
+    public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
         List<TransactionPerMinuteSummaryProjection> transactionPerMinuteSummariesProjection = transactionRepository.findTransactionPerMinuteSummary();
         List<TransactionPerMinuteSummary> totalTransactionPerMinuteSummary = transactionPerMinuteSummariesProjection.stream()
                                                                             .map(TransactionMapper::toTransactionPerMinuteSummary)
@@ -55,6 +55,8 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     public Page<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
         Specification<TransactionEntity> spec = Specification.where(null);
 
+        //Todo: Refactor this to a more elegant way
+        
         if (status != null && !status.isEmpty()) {
             spec = spec.and(TransactionSpecification.hasStatus(status));
         }
