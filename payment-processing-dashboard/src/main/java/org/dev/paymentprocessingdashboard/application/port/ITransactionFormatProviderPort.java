@@ -1,9 +1,7 @@
 package org.dev.paymentprocessingdashboard.application.port;
 
-import org.dev.paymentprocessingdashboard.domain.Transaction;
-
 public interface ITransactionFormatProviderPort {
 
-    Transaction getTransactionFromLine(String line);
-
+    record rTransaction(String logTime, String transactionId, String userId, double amount, String status, String timestamp, String location) {}
+    rTransaction getTransactionFromLine(String line);
 }
