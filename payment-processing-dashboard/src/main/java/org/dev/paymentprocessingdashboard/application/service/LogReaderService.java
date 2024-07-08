@@ -41,7 +41,6 @@ public class LogReaderService implements ILogReaderServicePort {
             String line;
             List<Transaction> transactions = new ArrayList<>();
             while ((line = file.readLine()) != null) {
-                //Todo: processline in a separate thread to improve performance and the concert is by Transaction object, order by arrive line
                 Transaction transaction = Transaction.processLine(line, transactionFormatProviderAdapter);
                 if (transaction != null)
                     transactions.add(transaction);

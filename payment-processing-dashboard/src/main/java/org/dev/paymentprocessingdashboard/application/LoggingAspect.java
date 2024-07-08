@@ -25,10 +25,8 @@ public class LoggingAspect {
         this.actionLogPersistenceAdapter = actionLogPersistenceAdapter;
     }
 
-    //Todo: cath exception and log it
     @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) && args(status, userId, minAmount, maxAmount, transactionId, page, size)")
     public void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
-        //Todo - Refactor whit RabbitMQ
         String action = "Filter Transactions";
         String details = String.format("Filter applied - Status: %s, UserId: %s, MinAmount: %s, MaxAmount: %s, TransactionId: %s, Page: %d, Size: %d",
                 status, userId, minAmount, maxAmount, transactionId, page, size);
