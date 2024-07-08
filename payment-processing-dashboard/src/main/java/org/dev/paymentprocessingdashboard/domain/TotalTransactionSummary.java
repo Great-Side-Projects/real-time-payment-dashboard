@@ -29,7 +29,7 @@ public class TotalTransactionSummary {
     @Override
     public String toString() {
         return "*** Total Transaction Summary *** " + "\n" +
-                "Total processed amount: $" + this.totalProcessedAmount + "\n" +
+                "Total processed amount: $" + String.format("%.2f", this.totalProcessedAmount) + "\n" +
                 "Number of successful transactions: " + this.totalSuccessTransactions + "\n" +
                 "Number of failed transactions: " + this.totalFailedTransactions + "\n" +
                 "Number of transactions per user: " + this.totalTransactionsPerUser +
