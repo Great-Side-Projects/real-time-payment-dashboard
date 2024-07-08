@@ -1,5 +1,6 @@
-package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
+package org.dev.paymentprocessingdashboard.infraestructure.adapter;
 
+import org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence.TransactionEntity;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.UUID;
 

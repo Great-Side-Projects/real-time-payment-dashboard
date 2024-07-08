@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 public class ActionLogEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGen")
-    @SequenceGenerator(name = "seqGen", sequenceName = "seq_actionlog", initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGenLog")
+    @SequenceGenerator(name = "seqGenLog", sequenceName = "seq_actionlog", initialValue = 1)
     private Long id;
     private String action;
     private String details;
