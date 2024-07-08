@@ -56,6 +56,9 @@ public class Transaction {
                 '}';
     }
     public static Transaction processLine(String line, ITransactionFormatProviderPort transactionFormatProviderPort){
-        return transactionFormatProviderPort.getTransactionFromLine(line);
+        ITransactionFormatProviderPort.rTransaction rTransaction = transactionFormatProviderPort.getTransactionFromLine(line);
+        if (rTransaction == null)
+            return null;
+        return new Transaction(rTransaction.transactionId(), rTransaction.userId(), rTransaction.amount(), rTransaction.status(), rTransaction.timestamp(), rTransaction.location());
     }
 }

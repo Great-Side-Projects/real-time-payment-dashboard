@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransactionRabbitMQTemplateAdapter implements ITransactionEventTemplatePort<String> {
+public class TransactionRabbitMQTemplateAdapter implements ITransactionEventTemplatePort<String[]> {
     private RabbitTemplate rabbitTemplate;
 
     @Value("${spring.rabbitmq.queue.name}")
@@ -17,7 +17,7 @@ public class TransactionRabbitMQTemplateAdapter implements ITransactionEventTemp
     }
 
     @Override
-    public void send(String data) {
+    public void send(String[] data) {
         rabbitTemplate.convertAndSend(QUEUE_NAME, data);
     }
 }
