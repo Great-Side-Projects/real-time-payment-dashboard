@@ -5,6 +5,7 @@ import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersi
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
 import org.dev.paymentprocessingdashboard.domain.*;
+import org.dev.paymentprocessingdashboard.infraestructure.adapter.TransactionSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -66,10 +67,14 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
 
     @Override
     public Page<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
-        Specification<TransactionEntity> spec = Specification.where(null);
+        size = Math.min(size, PAGE_SIZE); // Ensure size does not exceed PAGE_SIZE
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<TransactionEntity> spec = buildSpecification(status, userId, minAmount, maxAmount, transactionId);
+        return transactionRepository.findAll(spec, pageable).map(TransactionMapper::toTransaction);
+    }
 
-        //Todo: Refactor this to a more elegant way
-        
+    private Specification<TransactionEntity> buildSpecification(String status, String userId, Double minAmount, Double maxAmount, String transactionId) {
+        Specification<TransactionEntity> spec = Specification.where(null);
         if (status != null && !status.isEmpty()) {
             spec = spec.and(TransactionSpecification.hasStatus(status));
         }
@@ -82,10 +87,6 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
         if (transactionId != null && !transactionId.isEmpty()) {
             spec = spec.and(TransactionSpecification.hasTransactionId(UUID.fromString(transactionId)));
         }
-        if (size > PAGE_SIZE)
-            size = PAGE_SIZE;
-        Pageable pageable = PageRequest.of(page, size);
-        return transactionRepository.findAll(spec, pageable)
-                .map(TransactionMapper::toTransaction);
+        return spec;
     }
 }
