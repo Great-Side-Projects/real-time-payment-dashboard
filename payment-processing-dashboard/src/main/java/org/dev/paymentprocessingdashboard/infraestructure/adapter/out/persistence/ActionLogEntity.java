@@ -1,9 +1,6 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Setter;
 import java.time.LocalDateTime;
 @Setter
@@ -11,7 +8,8 @@ import java.time.LocalDateTime;
 public class ActionLogEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGen")
+    @SequenceGenerator(name = "seqGen", sequenceName = "seq_actionlog", initialValue = 1)
     private Long id;
     private String action;
     private String details;

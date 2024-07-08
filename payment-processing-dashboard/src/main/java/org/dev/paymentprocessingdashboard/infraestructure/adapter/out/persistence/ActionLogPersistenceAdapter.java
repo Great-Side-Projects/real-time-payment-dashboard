@@ -3,9 +3,11 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persisten
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
+import org.dev.paymentprocessingdashboard.domain.ActionLog;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @PersistenceAdapter
 public class ActionLogPersistenceAdapter implements IActionLogPersistencePort {
@@ -17,28 +19,17 @@ public class ActionLogPersistenceAdapter implements IActionLogPersistencePort {
     }
 
     @Override
-    public void save(String action, String details) {
-        // Save action log
-        ActionLogEntity log = new ActionLogEntity();
-        log.setAction(action);
-        log.setDetails(details);
-        log.setTimestamp(LocalDateTime.now());
+    public void save(ActionLog actionLog) {
+        ActionLogEntity log = TransactionMapper.toActionLogEntity(actionLog);
         actionLogRepository.save(log);
-
     }
 
     @Override
-    public void saveAll(String action, List<String> details) {
+    public void saveAll(List<ActionLog> actionLogs) {
 
-        List<ActionLogEntity> logs = details.stream()
-                .map(detail -> {
-                    ActionLogEntity log = new ActionLogEntity();
-                    log.setAction(action);
-                    log.setDetails(detail);
-                    log.setTimestamp(LocalDateTime.now());
-                    return log;
-                })
-                .toList();
+        List<ActionLogEntity> logs = actionLogs.stream()
+                .map(TransactionMapper::toActionLogEntity)
+                .collect(Collectors.toList());
         actionLogRepository.saveAll(logs);
     }
 }
