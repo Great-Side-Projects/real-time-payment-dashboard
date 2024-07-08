@@ -17,7 +17,7 @@ import java.util.List;
 @UseCase
 public class LogReaderService implements ILogReaderServicePort {
 
-    private static final String LOG_FILE_PATH = "/home/angel/Documents/paraborrar/real-time-payment-dashboard/log-generator/logs/transactions.log";
+    private static final String LOG_FILE_PATH = "log-generator/logs/transactions.log";
     private final Path path = Paths.get(LOG_FILE_PATH);
     private long lastKnownPosition = 0;
     private final String ANSIRESET = "\u001B[0m";
@@ -36,8 +36,7 @@ public class LogReaderService implements ILogReaderServicePort {
     @Override
     public List<Transaction> readLogFile() throws IOException {
 
-        //Todo: read file with relative path
-        try (RandomAccessFile file = new RandomAccessFile(path.toFile(), "r")) {
+        try (RandomAccessFile file = new RandomAccessFile(path.normalize().toAbsolutePath().toFile(), "r")) {
             file.seek(lastKnownPosition);
             String line;
             List<Transaction> transactions = new ArrayList<>();
