@@ -24,13 +24,13 @@ public class TransactionController {
     @GetMapping("/filter")
     public Page<Transaction> filterTransactions(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String userId,
-            @RequestParam(required = false) Double minAmount,
-            @RequestParam(required = false) Double maxAmount,
-            @RequestParam(required = false) String transactionId,
+            @RequestParam(required = false) String userid,
+            @RequestParam(required = false) Double minamount,
+            @RequestParam(required = false) Double maxamount,
+            @RequestParam(required = false) String transactionid,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return transactionService.filterTransactions(status, userId, minAmount, maxAmount, transactionId, page, size);
+        return transactionService.filterTransactions(status, userid, minamount, maxamount, transactionid, page, size);
     }
 
 }
