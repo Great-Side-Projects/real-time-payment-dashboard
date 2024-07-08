@@ -1,5 +1,6 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
@@ -8,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,11 +29,24 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     }
 
     @Override
+    @CircuitBreaker(name = "transactionPersistence", fallbackMethod = "fallbackSaveAll")
     public void saveAll(List<Transaction> transactions) {
-        List<TransactionEntity> transactionEntityList = transactions.stream()
-                .map(TransactionMapper::toTransactionEntity)
-                .collect(Collectors.toList());
-        transactionRepository.saveAll(transactionEntityList);
+        try {
+            List<TransactionEntity> transactionEntityList = transactions.stream()
+                    .map(TransactionMapper::toTransactionEntity)
+                    .collect(Collectors.toList());
+            transactionRepository.saveAll(transactionEntityList);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error saving transactions");
+        }
+    }
+
+    public void fallbackSaveAll(List<Transaction> transactions, Throwable t) {
+        //Implamentation of fallback method for saveAll method in case of failure in the circuit breaker
+        //This method will be called when the circuit breaker is open
+        //Maybe we can send an email to the admin to notify the error
+        System.out.println("Error saving transactions: " + t.getMessage());
     }
 
     @Override

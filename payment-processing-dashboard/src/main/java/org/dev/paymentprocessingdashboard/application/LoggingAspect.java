@@ -78,10 +78,11 @@ public class LoggingAspect {
             ActionLog actionLog = new ActionLog(actionLogData[0], actionLogData[1]);
             actionLogs.add(actionLog);
         }
-        if (actionLogs.size() == 1)
-            actionLogPersistenceAdapter.save(actionLogs.get(0));
-        else
-            actionLogPersistenceAdapter.saveAll(actionLogs);
+
+            if (actionLogs.size() == 1)
+                actionLogPersistenceAdapter.save(actionLogs.get(0));
+            else
+                actionLogPersistenceAdapter.saveAll(actionLogs);
 
         actionLogs.forEach(actionLog -> {
             System.out.println(" [x] Received '" + actionLog + "'");
