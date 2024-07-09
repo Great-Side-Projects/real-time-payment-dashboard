@@ -35,4 +35,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=real-time-payment-dashboard -Dsonar.projectName='real-time-payment-dashboard'
+        run: mvn -B -f real-time-payment-dashboard/payment-processing-dashboard/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=real-time-payment-dashboard -Dsonar.projectName='real-time-payment-dashboard'
