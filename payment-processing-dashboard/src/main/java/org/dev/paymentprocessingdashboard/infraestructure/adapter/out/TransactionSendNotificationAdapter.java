@@ -1,22 +1,19 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out;
 
-import org.dev.paymentprocessingdashboard.application.port.ITransactionBusinessRulePort;
+import org.dev.paymentprocessingdashboard.application.port.INotificationStrategy;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionSendNotificationPort;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.dev.paymentprocessingdashboard.domain.TransactionStatusEnum;
+import org.dev.paymentprocessingdashboard.application.notificationstrategy.FailureNotificationStrategy;
+import org.dev.paymentprocessingdashboard.application.notificationstrategy.HighAmountNotificationStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class TransactionSendNotificationAdapter implements ITransactionSendNotificationPort, ITransactionBusinessRulePort {
+public class TransactionSendNotificationAdapter implements ITransactionSendNotificationPort {
 
     private final ITransactionEventTemplatePort<String> transactionWebSocketAdapter;
-    private final String ANSIRED = "\u001B[31m";
-    private final String ANSIYELLOW = "\u001B[33m";
-    private final int AMOUNT_1000 = 1000;
-
 
     public TransactionSendNotificationAdapter(ITransactionEventTemplatePort<String> transactionWebSocketAdapter) {
         this.transactionWebSocketAdapter = transactionWebSocketAdapter;
@@ -25,33 +22,16 @@ public class TransactionSendNotificationAdapter implements ITransactionSendNotif
     @Override
     public void send(List<Transaction> transactions) {
 
+        List<INotificationStrategy> strategies = List.of(new FailureNotificationStrategy(), new HighAmountNotificationStrategy());
+
         transactions.forEach(transaction -> {
-            boolean hasNotificationRule = false;
-            String transactionMessage = transaction.toString();
-
-            if (isFailureTransaction(transaction)) {
-                hasNotificationRule = true;
-                transactionMessage = colorizeMessage(transactionMessage, ANSIRED);
-            } else if (isHighAmountTransaction(transaction)) {
-                hasNotificationRule = true;
-                transactionMessage = colorizeMessage(transactionMessage, ANSIYELLOW);
-            }
-
-            if (hasNotificationRule) {
-                transactionWebSocketAdapter.send(transactionMessage);
-            }
+            strategies.stream()
+                    .filter(strategy -> strategy.applies(transaction))
+                    .findFirst()
+                    .ifPresent(strategy -> {
+                        String message = strategy.getMessage(transaction);
+                        transactionWebSocketAdapter.send(message);
+                    });
         });
-    }
-    @Override
-    public boolean isFailureTransaction(Transaction transaction) {
-        return transaction.getStatus().equals(TransactionStatusEnum.FAILURE.toString());
-    }
-    @Override
-    public boolean isHighAmountTransaction(Transaction transaction) {
-        return transaction.getAmount() > AMOUNT_1000;
-    }
-
-    private String colorizeMessage(String message, String color) {
-        return color + message;
     }
 }
