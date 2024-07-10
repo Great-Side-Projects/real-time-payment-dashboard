@@ -15,7 +15,6 @@ import java.util.List;
 @UseCase
 public class LogReaderService implements ILogReaderServicePort {
 
-    private long lastKnownPosition = 0;
     private final String ANSIRESET = "\u001B[0m";
     private final String ANSIBLUE = "\u001B[34m";
     private final ITransactionPersistencePort transactionPersistenceAdapter;
@@ -33,15 +32,18 @@ public class LogReaderService implements ILogReaderServicePort {
         this.fileReaderAdapter = fileReaderAdapter;
     }
 
-    @Scheduled(fixedRate = 500) // Cada 1 segundos
+    @Scheduled(fixedRate = 2500) // Cada 1 segundos
     @Override
     public List<Transaction> readLogFile() throws IOException {
 
-        List<String> lines = fileReaderAdapter.readLines(lastKnownPosition);
+        List<String> lines = fileReaderAdapter.readLines();
 
         if (lines.isEmpty()) {
             return List.of();
         }
+
+        System.out.println("*** Transactions read from file ***");
+        lines.forEach(System.out::println);
 
         List<Transaction> transactions = new ArrayList<>();
 
@@ -57,10 +59,11 @@ public class LogReaderService implements ILogReaderServicePort {
         transactionPersistenceAdapter.saveAll(transactions);
         transactionSendNotificationAdapter.send(transactions);
 
+        System.out.println("*** Transactions processed ***");
         transactions.forEach(transaction -> System.out.println(ANSIBLUE + transaction));
         System.out.println(ANSIRESET + transactionPersistenceAdapter.totalTransactionSummary());
         System.out.println(transactionPersistenceAdapter.summaryTransactionsPerMinute());
-        lastKnownPosition = fileReaderAdapter.getLastKnownPosition();
+        fileReaderAdapter.saveLastKnownPosition();
         return transactions;
 
     }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IFileReaderPort {
-    List<String> readLines(long lastKnownPosition) throws IOException;
+    List<String> readLines() throws IOException;
     long getLastKnownPosition();
+    void saveLastKnownPosition() throws IOException;
 }
