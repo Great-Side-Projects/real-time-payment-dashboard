@@ -44,7 +44,7 @@ public class LoggingAspect {
         String[] actionLogMessages = new String[transactions.size()];
         transactions.forEach(transaction -> {
             String action = "Process Transaction";
-            String details = String.format("Processed transaction - Id: %s, UserId: %s, Amount: %s, Status: %s, Timestamp: %s, Location: %s",
+            String details = String.format("Processed transaction - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
                     transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             actionLogMessages[transactions.indexOf(transaction)] = actionLogMessage;
@@ -59,7 +59,7 @@ public class LoggingAspect {
         String[] actionLogMessages = new String[transactions.size()];
         transactions.forEach(transaction -> {
             String action = "Send Notification";
-            String details = String.format("Send notification - Id: %s, UserId: %s, Amount: %s, Status: %s, Timestamp: %s, Location: %s",
+            String details = String.format("Send notification - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
                     transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             actionLogMessages[transactions.indexOf(transaction)] = actionLogMessage;

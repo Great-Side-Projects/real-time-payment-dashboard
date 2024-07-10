@@ -51,7 +51,7 @@ public class Transaction {
                 ", userid='" + userid + '\'' +
                 ", amount=" + amount +
                 ", status='" + status + '\'' +
-                ", timestamp='" + timestamp + '\'' +
+                ", time='" + timestamp + '\'' +
                 ", location='" + location + '\'' +
                 '}';
     }
