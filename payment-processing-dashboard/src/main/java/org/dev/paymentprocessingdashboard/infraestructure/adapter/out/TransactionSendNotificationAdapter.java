@@ -24,14 +24,12 @@ public class TransactionSendNotificationAdapter implements ITransactionSendNotif
 
         List<INotificationStrategy> strategies = List.of(new FailureNotificationStrategy(), new HighAmountNotificationStrategy());
 
-        transactions.forEach(transaction -> {
-            strategies.stream()
-                    .filter(strategy -> strategy.applies(transaction))
-                    .findFirst()
-                    .ifPresent(strategy -> {
-                        String message = strategy.getMessage(transaction);
-                        transactionWebSocketAdapter.send(message);
-                    });
-        });
+        transactions.forEach(transaction -> strategies.stream()
+                .filter(strategy -> strategy.applies(transaction))
+                .findFirst()
+                .ifPresent(strategy -> {
+                    String message = strategy.getMessage(transaction);
+                    transactionWebSocketAdapter.send(message);
+                }));
     }
 }
