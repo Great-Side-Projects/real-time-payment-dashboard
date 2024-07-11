@@ -1,11 +1,11 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.dev.paymentprocessingdashboard.application.port.ITransactionSpecificationBuilderPort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
 import org.dev.paymentprocessingdashboard.domain.*;
-import org.dev.paymentprocessingdashboard.infraestructure.adapter.TransactionSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +18,11 @@ import java.util.stream.Collectors;
 public class TransactionPersistenceAdapter implements ITransactionPersistencePort {
     private final ITransactionRepository transactionRepository;
     private static final int PAGE_SIZE = 100;
+    private final ITransactionSpecificationBuilderPort transactionSpecificationBuildeAdapter;
 
-    public TransactionPersistenceAdapter(ITransactionRepository transactionRepository) {
+    public TransactionPersistenceAdapter(ITransactionRepository transactionRepository, ITransactionSpecificationBuilderPort transactionSpecificationBuildeAdapter) {
         this.transactionRepository = transactionRepository;
+        this.transactionSpecificationBuildeAdapter = transactionSpecificationBuildeAdapter;
     }
 
     @Override
@@ -60,8 +62,8 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
         List<TransactionPerMinuteSummaryProjection> transactionPerMinuteSummariesProjection = transactionRepository.findTransactionPerMinuteSummary();
         List<TransactionPerMinuteSummary> totalTransactionPerMinuteSummary = transactionPerMinuteSummariesProjection.stream()
-                                                                            .map(TransactionMapper::toTransactionPerMinuteSummary)
-                                                                            .collect(Collectors.toList());
+                .map(TransactionMapper::toTransactionPerMinuteSummary)
+                .collect(Collectors.toList());
         return new TotalTransactionPerMinuteSummary(totalTransactionPerMinuteSummary);
     }
 
@@ -69,24 +71,16 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     public Page<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
         size = Math.min(size, PAGE_SIZE); // Ensure size does not exceed PAGE_SIZE
         Pageable pageable = PageRequest.of(page, size);
-        Specification<TransactionEntity> spec = buildSpecification(status, userId, minAmount, maxAmount, transactionId);
-        return transactionRepository.findAll(spec, pageable).map(TransactionMapper::toTransaction);
-    }
 
-    private Specification<TransactionEntity> buildSpecification(String status, String userId, Double minAmount, Double maxAmount, String transactionId) {
-        Specification<TransactionEntity> spec = Specification.where(null);
-        if (status != null && !status.isEmpty()) {
-            spec = spec.and(TransactionSpecification.hasStatus(status));
-        }
-        if (userId != null && !userId.isEmpty()) {
-            spec = spec.and(TransactionSpecification.hasUserId(userId));
-        }
-        if (minAmount != null && maxAmount != null) {
-            spec = spec.and(TransactionSpecification.hasAmountBetween(minAmount, maxAmount));
-        }
-        if (transactionId != null && !transactionId.isEmpty()) {
-            spec = spec.and(TransactionSpecification.hasTransactionId(UUID.fromString(transactionId)));
-        }
-        return spec;
+        UUID transactionIdUUID = transactionId != null && !transactionId.isEmpty() ? UUID.fromString(transactionId) : null;
+
+        Specification<TransactionEntity> spec = transactionSpecificationBuildeAdapter.New()
+                .with("status", status)
+                .with("userid", userId)
+                .withBetween("amount", minAmount, maxAmount)
+                .with("id", transactionIdUUID)
+                .build();
+
+        return transactionRepository.findAll(spec, pageable).map(TransactionMapper::toTransaction);
     }
 }
