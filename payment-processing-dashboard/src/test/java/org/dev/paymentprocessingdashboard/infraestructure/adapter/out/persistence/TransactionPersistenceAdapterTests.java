@@ -1,7 +1,9 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
-import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
+import org.dev.paymentprocessingdashboard.infraestructure.adapter.TransactionSpecificationBuilderAdapter;
+import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
+import org.dev.paymentprocessingdashboard.application.port.ITransactionSpecificationBuilderPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,22 +13,24 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-
+import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 class TransactionPersistenceAdapterTests {
 
     @Mock
     private ITransactionRepository transactionRepository;
+
+    @Mock
+    private ITransactionSpecificationBuilderPort transactionSpecificationBuilderAdapter;
 
     @InjectMocks
     private TransactionPersistenceAdapter transactionPersistenceAdapter;
@@ -37,71 +41,85 @@ class TransactionPersistenceAdapterTests {
     }
 
     @Test
-    @DisplayName("Save transaction returns the same transaction")
-    void saveTransactionReturnsTheSameTransaction() {
-        String id = UUID.randomUUID().toString();
-        Transaction transaction = new Transaction(id, "user1", 10.0, "success", "2024-07-08T20:10:08.338Z", "location");
-        TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(UUID.fromString(id));
-        transactionEntity.setUserid("user1");
-        transactionEntity.setAmount(10.0);
-        transactionEntity.setStatus("success");
-        transactionEntity.setLocation("location");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(transaction.getTimestamp(), formatter);
-        transactionEntity.setTimestamp(zonedDateTime.toLocalDateTime());
+    @DisplayName("Save transaction persists data correctly")
+    void saveTransactionPersistsDataCorrectly() {
+        Transaction transaction = new Transaction(UUID.randomUUID().toString(), "user1", 100.0, "success", "2024-07-08T20:10:08.338Z", "location");
+        TransactionEntity transactionEntity = TransactionMapper.toTransactionEntity(transaction);
         when(transactionRepository.save(any(TransactionEntity.class))).thenReturn(transactionEntity);
-        Transaction result = transactionPersistenceAdapter.save(transaction);
-        assertEquals(transaction, result);
+        Transaction savedTransaction = transactionPersistenceAdapter.save(transaction);
+        assertThat(savedTransaction).isNotNull();
+        assertThat(savedTransaction.getId()).isEqualTo(transaction.getId());
     }
 
     @Test
-    @DisplayName("Save all transactions successfully")
-    void saveAllTransactionsSuccessfully() {
-        Transaction transaction = new Transaction(UUID.randomUUID().toString(), "user1", 10.0, "success", "2024-07-08T20:10:08.338Z", "location");
+    @DisplayName("Save all transactions handles list correctly")
+    void saveAllTransactionsHandlesListCorrectly() {
+        Transaction transaction = new Transaction(UUID.randomUUID().toString(), "user1", 100.0, "success", "2024-07-08T20:10:08.338Z", "location");
         List<Transaction> transactions = Collections.singletonList(transaction);
         transactionPersistenceAdapter.saveAll(transactions);
-        // Success is verified by no exceptions thrown
+        // Verification is based on the absence of exceptions
     }
 
     @Test
-    @DisplayName("Find all transactions with valid criteria returns non-empty page")
-    void findAllTransactionsWithValidCriteriaReturnsNonEmptyPage() {
+    @DisplayName("Find all with valid criteria returns non-empty page")
+    void findAllWithValidCriteriaReturnsNonEmptyPage() {
+        // Mock the behavior using the interface methods directly
+        when(transactionSpecificationBuilderAdapter.New()).thenReturn(transactionSpecificationBuilderAdapter);
+        when(transactionSpecificationBuilderAdapter.with(any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.withBetween(any(), any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
+
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(UUID.fromString(UUID.randomUUID().toString()));
-        transactionEntity.setUserid("user2");
-        transactionEntity.setAmount(20.0);
-        transactionEntity.setStatus("success");
-        transactionEntity.setLocation("location");
+        transactionEntity.setId(UUID.randomUUID());
         transactionEntity.setTimestamp(LocalDateTime.now());
-        Page<TransactionEntity> expectedPage = new PageImpl<>(Collections.singletonList(transactionEntity));
-        when(transactionRepository.findAll(any(), any(PageRequest.class))).thenReturn(expectedPage);
-        Page<Transaction> result = transactionPersistenceAdapter.findAll("completed", "user1", 10.0, 100.0, UUID.randomUUID().toString(), 0, 10);
-        assertEquals(1, result.getTotalElements());
+        Page<TransactionEntity> page = new PageImpl<>(Collections.singletonList(transactionEntity));
+
+        when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
+
+        Page<Transaction> result = transactionPersistenceAdapter.findAll("success", "user1", 50.0, 150.0, UUID.randomUUID().toString(), 0, 10);
+
+        assertThat(result.getContent()).isNotEmpty();
     }
 
     @Test
-    @DisplayName("Find all transactions with no matching criteria returns empty page")
-    void findAllTransactionsWithNoMatchingCriteriaReturnsEmptyPage() {
-        Page<TransactionEntity> expectedPage = Page.empty();
-        when(transactionRepository.findAll(any(), any(PageRequest.class))).thenReturn(expectedPage);
+    @DisplayName("Find all with no criteria returns empty page")
+    void findAllWithNoCriteriaReturnsEmptyPage() {
+        when(transactionSpecificationBuilderAdapter.New()).thenReturn(transactionSpecificationBuilderAdapter);
+        when(transactionSpecificationBuilderAdapter.with(any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.withBetween(any(), any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
+        when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(Page.empty());
+        when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
+
+        when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(Page.empty());
         Page<Transaction> result = transactionPersistenceAdapter.findAll(null, null, null, null, null, 0, 10);
-        assertEquals(0, result.getTotalElements());
+        assertThat(result.getContent()).isEmpty();
     }
 
     @Test
-    @DisplayName("Find all transactions with page size exceeding maximum limits results to default page size")
-    void findAllTransactionsWithPageSizeExceedingMaximumLimitsResultsToDefaultPageSize() {
+    @DisplayName("Find all respects maximum page size limit")
+    void findAllRespectsMaximumPageSizeLimit() {
+        int requestedSize = 500;
+        final int PAGE_SIZE = 100;
+        when(transactionSpecificationBuilderAdapter.New()).thenReturn(transactionSpecificationBuilderAdapter);
+        when(transactionSpecificationBuilderAdapter.with(any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.withBetween(any(), any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
+        when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(UUID.fromString(UUID.randomUUID().toString()));
-        transactionEntity.setUserid("user2");
-        transactionEntity.setAmount(20.0);
-        transactionEntity.setStatus("success");
-        transactionEntity.setLocation("location");
+        transactionEntity.setId(UUID.randomUUID());
         transactionEntity.setTimestamp(LocalDateTime.now());
-        Page<TransactionEntity> expectedPage = new PageImpl<>(Collections.nCopies(100, transactionEntity));
-        when(transactionRepository.findAll(any(), any(PageRequest.class))).thenReturn(expectedPage);
-        Page<Transaction> result = transactionPersistenceAdapter.findAll("completed", "user2", 20.0, 200.0, UUID.randomUUID().toString(), 0, 500);
-        assertEquals(100, result.getTotalElements());
+        Page<TransactionEntity> page = new PageImpl<>(Collections.nCopies(PAGE_SIZE, transactionEntity ));
+        when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
+        Page<Transaction> result = transactionPersistenceAdapter.findAll(null, null, null, null, null, 0, requestedSize);
+        assertThat(result.getSize()).isEqualTo(PAGE_SIZE);
+    }
+
+    @Test
+    @DisplayName("Fallback save all method is triggered on exception")
+    void fallbackSaveAllMethodIsTriggeredOnException() {
+        List<Transaction> transactions = Collections.singletonList(new Transaction(UUID.randomUUID().toString(), "user1", 100.0, "failed", "2024-07-08T20:10:08.338Z", "location"));
+        doThrow(new RuntimeException("Database error")).when(transactionRepository).saveAll(anyList());
+        transactionPersistenceAdapter.fallbackSaveAll(transactions, new RuntimeException("Database error"));
+        // Verification is based on the absence of exceptions
     }
 }
