@@ -65,7 +65,6 @@ public class LogReaderService implements ILogReaderServicePort {
         System.out.println(transactionPersistenceAdapter.summaryTransactionsPerMinute());
         fileReaderAdapter.saveLastKnownPosition();
         return transactions;
-
     }
 }
 

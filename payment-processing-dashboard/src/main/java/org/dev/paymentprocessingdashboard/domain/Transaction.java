@@ -1,5 +1,6 @@
 package org.dev.paymentprocessingdashboard.domain;
 
+import org.dev.paymentprocessingdashboard.application.port.ITransactionConvertProviderPort;
 import org.dev.paymentprocessingdashboard.application.port.ITransactionFormatProviderPort;
 
 public class Transaction {
@@ -46,19 +47,18 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction {" +
-                "id='" + id + '\'' +
-                ", userid='" + userid + '\'' +
-                ", amount=" + amount +
-                ", status='" + status + '\'' +
-                ", time='" + timestamp + '\'' +
-                ", location='" + location + '\'' +
-                '}';
+        return """
+                {"Transaction":{"id":'%s', "userid":'%s', "amount":%f, "status":'%s', "time":'%s', "location":'%s'}}"""
+                .formatted(id, userid, amount, status, timestamp, location);
     }
     public static Transaction processLine(String line, ITransactionFormatProviderPort transactionFormatProviderPort){
         ITransactionFormatProviderPort.rTransaction rTransaction = transactionFormatProviderPort.getTransactionFromLine(line);
         if (rTransaction == null)
             return null;
         return new Transaction(rTransaction.transactionId(), rTransaction.userId(), rTransaction.amount(), rTransaction.status(), rTransaction.timestamp(), rTransaction.location());
+    }
+
+    public static Transaction loadFromStringJson(String json, ITransactionConvertProviderPort transactionCeonverterProviderPort){
+      return transactionCeonverterProviderPort.loadFromStringJson(json);
     }
 }

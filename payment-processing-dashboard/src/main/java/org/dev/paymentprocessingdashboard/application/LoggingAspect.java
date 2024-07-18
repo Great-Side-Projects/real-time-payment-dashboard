@@ -3,6 +3,7 @@ package org.dev.paymentprocessingdashboard.application;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.dev.paymentprocessingdashboard.application.port.ITransactionConvertProviderPort;
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessingdashboard.domain.ActionLog;
@@ -18,11 +19,17 @@ public class LoggingAspect {
 
     private final ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter;
     private final IActionLogPersistencePort actionLogPersistenceAdapter;
+    private final ITransactionConvertProviderPort transactionConvertProviderAdapter;
     private final String SEPARATOR = "::";
+    private final int CHUNK = 1000;
+    private final String ANSIRED = "\u001B[31m";
+    private final String ANSIYELLOW = "\u001B[33m";
 
-    public LoggingAspect(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter, IActionLogPersistencePort actionLogPersistenceAdapter) {
+
+    public LoggingAspect(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter, IActionLogPersistencePort actionLogPersistenceAdapter, ITransactionConvertProviderPort transactionConvertProviderAdapter) {
         this.transactionRabbitMQTemplateAdapter = transactionRabbitMQTemplateAdapter;
         this.actionLogPersistenceAdapter = actionLogPersistenceAdapter;
+        this.transactionConvertProviderAdapter = transactionConvertProviderAdapter;
     }
 
     @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) && args(status, userId, minAmount, maxAmount, transactionId, page, size)")
@@ -41,30 +48,49 @@ public class LoggingAspect {
             return;
         }
 
-        String[] actionLogMessages = new String[transactions.size()];
+        List<String> actionLogMessages = new ArrayList<>();
         transactions.forEach(transaction -> {
             String action = "Process Transaction";
             String details = String.format("Processed transaction - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
                     transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
-            actionLogMessages[transactions.indexOf(transaction)] = actionLogMessage;
+            actionLogMessages.add(actionLogMessage);
+            if (actionLogMessages.size() == CHUNK)
+            {
+                transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
+                actionLogMessages.clear();
+            }
         });
 
-        transactionRabbitMQTemplateAdapter.send(actionLogMessages);
+        if (actionLogMessages.size() > 0)
+            transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
     }
 
-    @After("execution(* org.dev.paymentprocessingdashboard.infraestructure.adapter.out.TransactionSendNotificationAdapter.send(..)) && args(transactions)")
-    public void logNotification(List<Transaction> transactions) {
+    @AfterReturning(value = "execution(* org.dev.paymentprocessingdashboard.infraestructure.adapter.out.TransactionSendNotificationAdapter.send(..))", returning = "notifiedTransactions")
+    public void logNotification(List<Transaction> notifiedTransactions) {
 
-        String[] actionLogMessages = new String[transactions.size()];
-        transactions.forEach(transaction -> {
+        if (notifiedTransactions.isEmpty()) {
+            return;
+        }
+
+        List<String> actionLogMessages = new ArrayList<>();
+        notifiedTransactions.forEach(transaction -> {
             String action = "Send Notification";
+            // clean ANSI color red and
+
             String details = String.format("Send notification - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
                     transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
-            actionLogMessages[transactions.indexOf(transaction)] = actionLogMessage;
+            actionLogMessages.add(actionLogMessage);
+            if (actionLogMessages.size() == CHUNK)
+            {
+                transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
+                actionLogMessages.clear();
+            }
         });
-        transactionRabbitMQTemplateAdapter.send(actionLogMessages);
+
+        if (actionLogMessages.size() > 0)
+            transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.name}")

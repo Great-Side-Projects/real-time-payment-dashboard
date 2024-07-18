@@ -8,6 +8,7 @@ import org.dev.paymentprocessingdashboard.application.notificationstrategy.Failu
 import org.dev.paymentprocessingdashboard.application.notificationstrategy.HighAmountNotificationStrategy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -20,16 +21,18 @@ public class TransactionSendNotificationAdapter implements ITransactionSendNotif
     }
 
     @Override
-    public void send(List<Transaction> transactions) {
+    public List<Transaction> send(List<Transaction> transactions) {
 
         List<INotificationStrategy> strategies = List.of(new FailureNotificationStrategy(), new HighAmountNotificationStrategy());
-
+        List<Transaction> notifiedTransactions = new ArrayList<>();
         transactions.forEach(transaction -> strategies.stream()
                 .filter(strategy -> strategy.applies(transaction))
                 .findFirst()
                 .ifPresent(strategy -> {
                     String message = strategy.getMessage(transaction);
                     transactionWebSocketAdapter.send(message);
+                    notifiedTransactions.add(transaction);
                 }));
+        return notifiedTransactions;
     }
 }

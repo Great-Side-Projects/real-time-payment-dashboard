@@ -5,5 +5,5 @@ import org.dev.paymentprocessingdashboard.domain.Transaction;
 import java.util.List;
 
 public interface ITransactionSendNotificationPort {
-    void send(List<Transaction> transactions);
+    List<Transaction> send(List<Transaction> transactions);
 }
