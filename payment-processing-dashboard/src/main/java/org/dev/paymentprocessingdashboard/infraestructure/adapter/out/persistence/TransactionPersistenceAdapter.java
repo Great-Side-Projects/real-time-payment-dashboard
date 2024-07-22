@@ -40,9 +40,6 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     @CircuitBreaker(name = "transactionPersistence", fallbackMethod = "fallbackSaveAll")
     public void saveAll(List<Transaction> transactions) {
         try {
-            //List<TransactionEntity> transactionEntityList = transactions.stream()
-            //        .map(TransactionMapper::toTransactionEntity)
-            //        .collect(Collectors.toList());
             transactionJdbcTemplateAdapter.saveAll(transactions);
 
         } catch (Exception e) {
