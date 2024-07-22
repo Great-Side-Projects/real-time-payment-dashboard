@@ -2,8 +2,9 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.in;
 
 import org.dev.paymentprocessingdashboard.application.port.in.IFileReaderPort;
 import org.springframework.stereotype.Component;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,8 +17,8 @@ public class FileReaderAdapter implements IFileReaderPort {
     private static final String LOG_FILE_PATH = "log-generator/logs/transactions.log";
     private static final String POSITION_FILE_PATH = "payment-processing-dashboard/last_known_position.txt";
     private final Path path = Paths.get(LOG_FILE_PATH);
-    //private final Path positionFilePath = Paths.get(POSITION_FILE_PATH);
     private static Path positionFilePath;
+    private List<String> lines = new ArrayList<>();
 
     // This static block is used to determine the positionFilePath based on the user.dir system property
     // validation for unit tests
@@ -38,16 +39,16 @@ public class FileReaderAdapter implements IFileReaderPort {
     @Override
     public List<String> readLines() throws IOException {
 
-        List<String> lines = new ArrayList<>();
-        try (RandomAccessFile file = new RandomAccessFile(path.normalize().toAbsolutePath().toFile(), "r")) {
-            file.seek(this.lastKnownPosition);
+        try (BufferedReader file = new BufferedReader(new FileReader(path.normalize().toAbsolutePath().toFile()))) {
+            file.skip(this.lastKnownPosition);
             String line;
-            while ((line = file.readLine()) != null) {
-                lines.add(line);
+            lines = file.lines().toList();
+            if (!lines.isEmpty()) {
+                this.lastKnownPosition += lines.stream().mapToLong(l -> {
+                    return l.length() + System.lineSeparator().length();
+                }).sum();
             }
-            this.lastKnownPosition = file.getFilePointer();
         }
-
         return lines;
     }
 

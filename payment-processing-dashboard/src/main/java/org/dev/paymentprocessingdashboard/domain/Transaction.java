@@ -8,16 +8,16 @@ public class Transaction {
     private String userid;
     private double amount;
     private String status;
-    private String timestamp;
+    private String time;
     private String location;
 
 
-    public Transaction(String id, String userid, double amount, String status, String timestamp, String location) {
+    public Transaction(String id, String userid, double amount, String status, String time, String location) {
         this.id = id;
         this.userid = userid;
         this.amount = amount;
         this.status = status;
-        this.timestamp = timestamp;
+        this.time = time;
         this.location = location;
     }
 
@@ -37,8 +37,8 @@ public class Transaction {
         return status;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getTime() {
+        return time;
     }
 
     public String getLocation() {
@@ -49,7 +49,7 @@ public class Transaction {
     public String toString() {
         return """
                 {"Transaction":{"id":'%s', "userid":'%s', "amount":%f, "status":'%s', "time":'%s', "location":'%s'}}"""
-                .formatted(id, userid, amount, status, timestamp, location);
+                .formatted(id, userid, amount, status, time, location);
     }
     public static Transaction processLine(String line, ITransactionFormatProviderPort transactionFormatProviderPort){
         ITransactionFormatProviderPort.rTransaction rTransaction = transactionFormatProviderPort.getTransactionFromLine(line);

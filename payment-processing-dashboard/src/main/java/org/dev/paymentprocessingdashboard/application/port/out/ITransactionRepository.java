@@ -25,7 +25,7 @@ public interface ITransactionRepository extends CrudRepository<TransactionEntity
     List<TransactionSummaryProjection> findTransactionSummary();
 
     @Query(value = """
-            SELECT DATE_FORMAT(t.timestamp, '%Y-%m-%d %H:%i') AS minute,
+            SELECT DATE_FORMAT(t.time, '%Y-%m-%d %H:%i') AS minute,
             COUNT(*) AS totalTransactions
             FROM transaction_entity t
             GROUP BY minute

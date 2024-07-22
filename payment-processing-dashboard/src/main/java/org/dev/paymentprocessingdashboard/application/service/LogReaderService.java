@@ -4,37 +4,31 @@ import org.dev.paymentprocessingdashboard.application.port.ITransactionFormatPro
 import org.dev.paymentprocessingdashboard.application.port.in.IFileReaderPort;
 import org.dev.paymentprocessingdashboard.application.port.in.ILogReaderServicePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
-import org.dev.paymentprocessingdashboard.application.port.out.ITransactionSendNotificationPort;
 import org.dev.paymentprocessingdashboard.common.UseCase;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.springframework.scheduling.annotation.Scheduled;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 @UseCase
 public class LogReaderService implements ILogReaderServicePort {
 
-    private final String ANSIRESET = "\u001B[0m";
-    private final String ANSIBLUE = "\u001B[34m";
     private final ITransactionPersistencePort transactionPersistenceAdapter;
     private final ITransactionFormatProviderPort transactionFormatProviderAdapter;
-    private final ITransactionSendNotificationPort transactionSendNotificationAdapter;
+
     private final IFileReaderPort fileReaderAdapter;
 
     public LogReaderService(ITransactionPersistencePort transactionPersistenceAdapter,
                             ITransactionFormatProviderPort transactionFormatProviderAdapter,
-                            ITransactionSendNotificationPort transactionSendNotificationAdapter,
                             IFileReaderPort fileReaderAdapter) {
         this.transactionPersistenceAdapter = transactionPersistenceAdapter;
         this.transactionFormatProviderAdapter = transactionFormatProviderAdapter;
-        this.transactionSendNotificationAdapter = transactionSendNotificationAdapter;
         this.fileReaderAdapter = fileReaderAdapter;
     }
 
-    @Scheduled(fixedRate = 2500) // Cada 1 segundos
     @Override
-    public List<Transaction> readLogFile() throws IOException {
+    public List<Transaction> readTransactionLogFile() throws IOException {
 
         List<String> lines = fileReaderAdapter.readLines();
 
@@ -42,29 +36,22 @@ public class LogReaderService implements ILogReaderServicePort {
             return List.of();
         }
 
+        //print new line
+        System.out.println("***************************************");
         System.out.println("*** Transactions read from file ***");
-        lines.forEach(System.out::println);
+        System.out.println("Number of transactions read: " + lines.size());
 
-        List<Transaction> transactions = new ArrayList<>();
+        List<Transaction> transactions = lines.parallelStream()
+                .map(line -> Transaction.processLine(line, transactionFormatProviderAdapter))
+                .filter(transaction -> transaction != null)
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
 
-        for (String line : lines) {
-            Transaction transaction = Transaction.processLine(line, transactionFormatProviderAdapter);
-            if (transaction != null)
-                transactions.add(transaction);
-        }
-        if (transactions.isEmpty()) {
-            return List.of();
-        }
-
-        transactionPersistenceAdapter.saveAll(transactions);
-        transactionSendNotificationAdapter.send(transactions);
-
-        System.out.println("*** Transactions processed ***");
-        transactions.forEach(transaction -> System.out.println(ANSIBLUE + transaction));
-        System.out.println(ANSIRESET + transactionPersistenceAdapter.totalTransactionSummary());
-        System.out.println(transactionPersistenceAdapter.summaryTransactionsPerMinute());
-        fileReaderAdapter.saveLastKnownPosition();
         return transactions;
+    }
+
+    @Override
+    public void saveLastKnownPosition() throws IOException {
+        fileReaderAdapter.saveLastKnownPosition();
     }
 }
 

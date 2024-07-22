@@ -2,6 +2,7 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persisten
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.dev.paymentprocessingdashboard.application.port.ITransactionSpecificationBuilderPort;
+import org.dev.paymentprocessingdashboard.application.port.out.IJdbcTemplatePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
@@ -19,10 +20,14 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     private final ITransactionRepository transactionRepository;
     private static final int PAGE_SIZE = 100;
     private final ITransactionSpecificationBuilderPort transactionSpecificationBuildeAdapter;
+    private final IJdbcTemplatePort<Transaction> transactionJdbcTemplateAdapter;
 
-    public TransactionPersistenceAdapter(ITransactionRepository transactionRepository, ITransactionSpecificationBuilderPort transactionSpecificationBuildeAdapter) {
+    public TransactionPersistenceAdapter(ITransactionRepository transactionRepository,
+                                         ITransactionSpecificationBuilderPort transactionSpecificationBuildeAdapter,
+                                         IJdbcTemplatePort<Transaction> transactionJdbcTemplateAdapter) {
         this.transactionRepository = transactionRepository;
         this.transactionSpecificationBuildeAdapter = transactionSpecificationBuildeAdapter;
+        this.transactionJdbcTemplateAdapter = transactionJdbcTemplateAdapter;
     }
 
     @Override
@@ -35,13 +40,13 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     @CircuitBreaker(name = "transactionPersistence", fallbackMethod = "fallbackSaveAll")
     public void saveAll(List<Transaction> transactions) {
         try {
-            List<TransactionEntity> transactionEntityList = transactions.stream()
-                    .map(TransactionMapper::toTransactionEntity)
-                    .collect(Collectors.toList());
-            transactionRepository.saveAll(transactionEntityList);
+            //List<TransactionEntity> transactionEntityList = transactions.stream()
+            //        .map(TransactionMapper::toTransactionEntity)
+            //        .collect(Collectors.toList());
+            transactionJdbcTemplateAdapter.saveAll(transactions);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error saving transactions");
+            throw new RuntimeException("Error saving transactions " + e.getMessage());
         }
     }
 

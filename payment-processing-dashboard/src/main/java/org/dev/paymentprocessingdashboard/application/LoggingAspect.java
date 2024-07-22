@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.dev.paymentprocessingdashboard.application.port.ITransactionConvertProviderPort;
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
+import org.dev.paymentprocessingdashboard.application.port.out.IJdbcTemplatePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessingdashboard.domain.ActionLog;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
@@ -20,16 +21,21 @@ public class LoggingAspect {
     private final ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter;
     private final IActionLogPersistencePort actionLogPersistenceAdapter;
     private final ITransactionConvertProviderPort transactionConvertProviderAdapter;
+    private final IJdbcTemplatePort<ActionLog> actionLogJdbcTemplateAdapter;
     private final String SEPARATOR = "::";
-    private final int CHUNK = 1000;
+    private final int CHUNK_MESSAGE_SIZE = 10000;
     private final String ANSIRED = "\u001B[31m";
     private final String ANSIYELLOW = "\u001B[33m";
 
 
-    public LoggingAspect(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter, IActionLogPersistencePort actionLogPersistenceAdapter, ITransactionConvertProviderPort transactionConvertProviderAdapter) {
+
+    public LoggingAspect(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter,
+                         IActionLogPersistencePort actionLogPersistenceAdapter,
+                         ITransactionConvertProviderPort transactionConvertProviderAdapter, IJdbcTemplatePort<ActionLog> actionLogJdbcTemplateAdapter) {
         this.transactionRabbitMQTemplateAdapter = transactionRabbitMQTemplateAdapter;
         this.actionLogPersistenceAdapter = actionLogPersistenceAdapter;
         this.transactionConvertProviderAdapter = transactionConvertProviderAdapter;
+        this.actionLogJdbcTemplateAdapter = actionLogJdbcTemplateAdapter;
     }
 
     @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) && args(status, userId, minAmount, maxAmount, transactionId, page, size)")
@@ -42,7 +48,7 @@ public class LoggingAspect {
         transactionRabbitMQTemplateAdapter.send(new String[]{actionLogMessage});
     }
 
-    @AfterReturning(value = "execution(* org.dev.paymentprocessingdashboard.application.service.LogReaderService.readLogFile(..)))", returning = "transactions")
+    @AfterReturning(value = "execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.processTransaction(..)))", returning = "transactions")
     public void logProcessTransaction(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
             return;
@@ -52,10 +58,10 @@ public class LoggingAspect {
         transactions.forEach(transaction -> {
             String action = "Process Transaction";
             String details = String.format("Processed transaction - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
-                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
+                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             actionLogMessages.add(actionLogMessage);
-            if (actionLogMessages.size() == CHUNK)
+            if (actionLogMessages.size() == CHUNK_MESSAGE_SIZE)
             {
                 transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
                 actionLogMessages.clear();
@@ -79,10 +85,10 @@ public class LoggingAspect {
             // clean ANSI color red and
 
             String details = String.format("Send notification - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
-                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTimestamp(), transaction.getLocation());
+                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             actionLogMessages.add(actionLogMessage);
-            if (actionLogMessages.size() == CHUNK)
+            if (actionLogMessages.size() == CHUNK_MESSAGE_SIZE)
             {
                 transactionRabbitMQTemplateAdapter.send(actionLogMessages.toArray(new String[0]));
                 actionLogMessages.clear();
@@ -103,13 +109,12 @@ public class LoggingAspect {
             actionLogs.add(actionLog);
         }
 
-            if (actionLogs.size() == 1)
-                actionLogPersistenceAdapter.save(actionLogs.get(0));
-            else
-                actionLogPersistenceAdapter.saveAll(actionLogs);
+        actionLogJdbcTemplateAdapter.saveAll(actionLogs);
 
-        actionLogs.forEach(actionLog -> {
-            System.out.println(" [x] Received '" + actionLog + "'");
-        });
+        // print count of action logs
+        System.out.println(" [x] Received '" + actionLogs.size() + " action logs");
+        //actionLogs.forEach(actionLog -> {
+        //    System.out.println(" [x] Received '" + actionLog + "'");
+        //});
     }
 }

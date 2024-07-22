@@ -24,7 +24,7 @@ public class TransactionRabbitMQTemplateAdapter implements ITransactionEventTemp
             rabbitTemplate.convertAndSend(QUEUE_NAME, data);
         } catch (Exception e) {
             System.out.println("Error sending transaction RabbitMQ event: " + e.getMessage());
-            throw new RuntimeException("Error sending transaction event");
+            throw new RuntimeException("Error sending transaction event" + e.getMessage());
         }
     }
 

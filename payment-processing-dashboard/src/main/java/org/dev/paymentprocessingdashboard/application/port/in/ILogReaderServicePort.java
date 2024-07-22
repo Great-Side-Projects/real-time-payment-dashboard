@@ -6,5 +6,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ILogReaderServicePort {
-    List<Transaction> readLogFile() throws IOException;
+    List<Transaction> readTransactionLogFile() throws IOException;
+    void saveLastKnownPosition() throws IOException;
 }

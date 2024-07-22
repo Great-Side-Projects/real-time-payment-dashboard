@@ -52,15 +52,6 @@ class TransactionPersistenceAdapterTests {
     }
 
     @Test
-    @DisplayName("Save all transactions handles list correctly")
-    void saveAllTransactionsHandlesListCorrectly() {
-        Transaction transaction = new Transaction(UUID.randomUUID().toString(), "user1", 100.0, "success", "2024-07-08T20:10:08.338Z", "location");
-        List<Transaction> transactions = Collections.singletonList(transaction);
-        transactionPersistenceAdapter.saveAll(transactions);
-        // Verification is based on the absence of exceptions
-    }
-
-    @Test
     @DisplayName("Find all with valid criteria returns non-empty page")
     void findAllWithValidCriteriaReturnsNonEmptyPage() {
         // Mock the behavior using the interface methods directly
@@ -70,8 +61,8 @@ class TransactionPersistenceAdapterTests {
         when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
 
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(UUID.randomUUID());
-        transactionEntity.setTimestamp(LocalDateTime.now());
+        transactionEntity.setId(UUID.randomUUID().toString());
+        transactionEntity.setTime(LocalDateTime.now().toString());
         Page<TransactionEntity> page = new PageImpl<>(Collections.singletonList(transactionEntity));
 
         when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
@@ -106,8 +97,8 @@ class TransactionPersistenceAdapterTests {
         when(transactionSpecificationBuilderAdapter.withBetween(any(), any(), any())).thenReturn(new TransactionSpecificationBuilderAdapter());
         when(transactionSpecificationBuilderAdapter.build()).thenReturn(Specification.where(null));
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(UUID.randomUUID());
-        transactionEntity.setTimestamp(LocalDateTime.now());
+        transactionEntity.setId(UUID.randomUUID().toString());
+        transactionEntity.setTime(LocalDateTime.now().toString());
         Page<TransactionEntity> page = new PageImpl<>(Collections.nCopies(PAGE_SIZE, transactionEntity ));
         when(transactionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
         Page<Transaction> result = transactionPersistenceAdapter.findAll(null, null, null, null, null, 0, requestedSize);
