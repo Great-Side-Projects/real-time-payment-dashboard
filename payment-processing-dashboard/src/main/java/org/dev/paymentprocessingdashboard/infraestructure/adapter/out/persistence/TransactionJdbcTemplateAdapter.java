@@ -29,11 +29,10 @@ public class TransactionJdbcTemplateAdapter implements IJdbcTemplatePort<Transac
         try (Connection conn = jdbcTemplate.getDataSource().getConnection()) {
             conn.setAutoCommit(false);
             int count = 0;
-            ZonedDateTime zonedDateTime;
 
             try ( PreparedStatement ps = conn.prepareStatement(INSERT_TRANSACTION)) {
                 for (Transaction transaction : transactions) {
-                    ps.setString(1, transaction.getId().toString());
+                    ps.setString(1, transaction.getId());
                     ps.setString(2, transaction.getUserId());
                     ps.setDouble(3, transaction.getAmount());
                     ps.setString(4, transaction.getStatus());
@@ -55,14 +54,5 @@ public class TransactionJdbcTemplateAdapter implements IJdbcTemplatePort<Transac
         } catch (SQLException e) {
             throw new RuntimeException("Error saving transactions", e);
         }
-        //jdbcTemplate.batchUpdate(INSERT_TRANSACTION, transactions, transactions.size(), (
-        //        (ps, transaction) -> {
-        //    ps.setObject(1, transaction.getId().toString());
-        //    ps.setString(2, transaction.getUserid());
-        //    ps.setDouble(3, transaction.getAmount());
-        //    ps.setString(4, transaction.getStatus());
-        //    ps.setObject(5, transaction.getTimestamp());
-        //    ps.setString(6, transaction.getLocation());
-        //}));
     }
 }

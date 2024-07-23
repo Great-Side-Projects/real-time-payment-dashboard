@@ -11,10 +11,8 @@ import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServic
 import org.dev.paymentprocessingdashboard.common.WebAdapter;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @WebAdapter
 @RestController
@@ -49,6 +47,19 @@ public class TransactionController {
             @Parameter(description = "Page size")
             @RequestParam(defaultValue = "10") int size) {
         return transactionService.filterTransactions(status, userid, minamount, maxamount, transactionid, page, size);
+    }
+
+    @Operation(summary = "Process transactions",
+            description = "Process a list of transactions", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Transactions processed")
+    @ApiResponse(responseCode = "400", description = "Invalid input")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @PostMapping("/process")
+    public void processTransaction(
+            @RequestBody
+            @Parameter(description = "List of transactions")
+            List<Transaction> transactions) {
+        transactionService.processTransaction(transactions);
     }
 
 }

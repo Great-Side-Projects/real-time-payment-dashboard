@@ -8,7 +8,6 @@ import org.dev.paymentprocessingdashboard.domain.TotalTransactionPerMinuteSummar
 import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.data.domain.Page;
-
 import java.util.List;
 
 @UseCase
@@ -34,8 +33,11 @@ public class TransactionService implements ITransactionServicePort {
             return List.of();
         }
 
+        long startTime = System.currentTimeMillis();
         transactionPersistenceAdapter.saveAll(transactions);
         transactionSendNotificationAdapter.send(transactions);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (endTime - startTime) / 60000 + ":" + ((endTime - startTime) / 1000) % 60 + ":" + (endTime - startTime) % 1000);
         return transactions;
     }
 

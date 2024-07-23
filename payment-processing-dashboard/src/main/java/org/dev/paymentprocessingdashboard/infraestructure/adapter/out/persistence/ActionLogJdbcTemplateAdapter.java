@@ -5,7 +5,6 @@ import org.dev.paymentprocessingdashboard.application.port.out.IJdbcTemplatePort
 import org.dev.paymentprocessingdashboard.domain.ActionLog;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,7 +24,6 @@ public class ActionLogJdbcTemplateAdapter implements IJdbcTemplatePort<ActionLog
     @Transactional
     public void saveAll(List<ActionLog> actionLogs) {
 
-
         try (Connection conn = jdbcTemplate.getDataSource().getConnection()) {
             conn.setAutoCommit(false);
             int count = 0;
@@ -36,7 +34,6 @@ public class ActionLogJdbcTemplateAdapter implements IJdbcTemplatePort<ActionLog
                     ps.addBatch();
 
                     if (++count % batchSize == 0) {
-                        // Ejecutar el batch cada batchSize registros
                         ps.executeBatch();
                     }
                 }
