@@ -2,34 +2,38 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persisten
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
-import org.dev.paymentprocessingdashboard.application.port.out.IActionLogRepository;
+import org.dev.paymentprocessingdashboard.application.port.out.ILogRepository;
+import org.dev.paymentprocessingdashboard.application.port.out.ILogTemplatePort;
 import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
-import org.dev.paymentprocessingdashboard.domain.ActionLog;
+import org.dev.paymentprocessingdashboard.domain.Log;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @PersistenceAdapter
-public class ActionLogPersistenceAdapter implements IActionLogPersistencePort {
+public class LogPersistenceAdapter implements IActionLogPersistencePort {
 
-    private final IActionLogRepository actionLogRepository;
+    private final ILogRepository logRepository;
+    private final ILogTemplatePort logTemplateAdapter;
 
-    public ActionLogPersistenceAdapter(IActionLogRepository actionLogRepository) {
-        this.actionLogRepository = actionLogRepository;
+    public LogPersistenceAdapter(ILogRepository logRepository,
+                                 ILogTemplatePort logTemplateAdapter) {
+        this.logRepository = logRepository;
+        this.logTemplateAdapter = logTemplateAdapter;
     }
 
     @Override
     @CircuitBreaker(name = "actionLogPersistence", fallbackMethod = "fallbackSave")
-    public void save(ActionLog actionLog) {
-        ActionLogEntity log = TransactionMapper.toActionLogEntity(actionLog);
+    public void save(Log actionLog) {
+        LogEntity log = TransactionMapper.toLogEntity(actionLog);
         try {
-            actionLogRepository.save(log);
+            logRepository.save(log);
         } catch (Exception e) {
             System.out.println("Error saving action log: " + e.getMessage());
             throw new RuntimeException("Error saving action log");
         }
     }
 
-    public void fallbackSave(ActionLog actionLog, Throwable t) {
+    public void fallbackSave(Log actionLog, Throwable t) {
         //Implamentation of fallback method for save method in case of failure in the circuit breaker
         //This method will be called when the circuit breaker is open
         //Maybe we can send an email to the admin to notify the error
@@ -38,20 +42,20 @@ public class ActionLogPersistenceAdapter implements IActionLogPersistencePort {
 
     @Override
     @CircuitBreaker(name = "actionLogPersistence", fallbackMethod = "fallbackSaveAll")
-    public void saveAll(List<ActionLog> actionLogs) {
+    public void saveAll(List<Log> actionLogs) {
 
-        List<ActionLogEntity> logs = actionLogs.stream()
-                .map(TransactionMapper::toActionLogEntity)
+        List<LogEntity> logs = actionLogs.stream()
+                .map(TransactionMapper::toLogEntity)
                 .collect(Collectors.toList());
         try {
-            actionLogRepository.saveAll(logs);
+            logTemplateAdapter.saveAll(logs);
         } catch (Exception e) {
             System.out.println("Error saving action logs: " + e.getMessage());
             throw new RuntimeException("Error saving action logs");
         }
     }
 
-    public void fallbackSaveAll(List<ActionLog> actionLogs, Throwable t) {
+    public void fallbackSaveAll(List<Log> actionLogs, Throwable t) {
         //Implamentation of fallback method for saveAll method in case of failure in the circuit breaker
         //This method will be called when the circuit breaker is open
         //Maybe we can send an email to the admin to notify the error

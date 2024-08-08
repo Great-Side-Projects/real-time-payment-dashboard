@@ -8,10 +8,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServicePort;
+import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessingdashboard.common.WebAdapter;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.ByteBuffer;
 import java.util.List;
 
 @WebAdapter
@@ -29,9 +33,9 @@ public class TransactionController {
     @Operation(summary = "Filter transactions",
             description = "Filter transactions by status, user id, amount, transaction id", tags = "Transactions")
     @ApiResponse(responseCode = "200", description = "Transactions filtered",
-            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Transaction.class)) })
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionFilterResponse.class)) })
     @GetMapping("/filter")
-    public Page<Transaction> filterTransactions(
+    public TransactionFilterResponse filterTransactions(
             @Parameter(description = "Transaction status")
             @RequestParam(required = false) String status,
             @Parameter(description = "User id")
@@ -42,11 +46,11 @@ public class TransactionController {
             @RequestParam(required = false) Double maxamount,
             @Parameter(description = "Transaction id")
             @RequestParam(required = false) String transactionid,
-            @Parameter(description = "Page number")
-            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page State")
+            @RequestParam(required = false) String nextpagingstate,
             @Parameter(description = "Page size")
             @RequestParam(defaultValue = "10") int size) {
-        return transactionService.filterTransactions(status, userid, minamount, maxamount, transactionid, page, size);
+        return transactionService.filterTransactions(status, userid, minamount, maxamount, transactionid, nextpagingstate, size);
     }
 
     @Operation(summary = "Process transactions",

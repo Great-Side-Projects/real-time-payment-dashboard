@@ -1,10 +1,10 @@
 package org.dev.paymentprocessingdashboard.domain;
 
-public class ActionLog {
+public class Log {
     private String action;
     private String details;
 
-    public ActionLog(String action, String details) {
+    public Log(String action, String details) {
         this.action = action;
         this.details = details;
     }

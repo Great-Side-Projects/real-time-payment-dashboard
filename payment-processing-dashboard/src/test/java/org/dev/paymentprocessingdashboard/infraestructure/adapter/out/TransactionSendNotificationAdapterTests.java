@@ -2,7 +2,6 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out;
 
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.dev.paymentprocessingdashboard.domain.TransactionStatusEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

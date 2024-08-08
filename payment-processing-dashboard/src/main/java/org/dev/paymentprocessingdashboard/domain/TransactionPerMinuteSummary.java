@@ -2,8 +2,6 @@ package org.dev.paymentprocessingdashboard.domain;
 
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class TransactionPerMinuteSummary {
     private final String minute;

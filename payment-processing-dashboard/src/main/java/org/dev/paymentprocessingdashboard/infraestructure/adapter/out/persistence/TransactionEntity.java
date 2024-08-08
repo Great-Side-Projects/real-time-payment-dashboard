@@ -1,20 +1,27 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.Indexed;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-@Entity
+import java.util.UUID;
+
 @Getter
 @Setter
-@Table(indexes = @Index(name = "uniqueIndex", columnList = "id", unique = true))
+@Table("transaction")
 public class TransactionEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long rowid;
+    private UUID rowid = UUID.randomUUID();
+    @Indexed
     private String id;
+    @Indexed
     private String userid;
+    @Indexed
     private double amount;
+    @Indexed
     private String status;
     private String time;
     private String location;

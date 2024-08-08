@@ -5,9 +5,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.dev.paymentprocessingdashboard.application.port.ITransactionConvertProviderPort;
 import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
-import org.dev.paymentprocessingdashboard.application.port.out.IJdbcTemplatePort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
-import org.dev.paymentprocessingdashboard.domain.ActionLog;
+import org.dev.paymentprocessingdashboard.domain.Log;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -21,28 +20,23 @@ public class LoggingAspect {
     private final ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter;
     private final IActionLogPersistencePort actionLogPersistenceAdapter;
     private final ITransactionConvertProviderPort transactionConvertProviderAdapter;
-    private final IJdbcTemplatePort<ActionLog> actionLogJdbcTemplateAdapter;
     private final String SEPARATOR = "::";
-    private final int CHUNK_MESSAGE_SIZE = 10000;
-    private final String ANSIRED = "\u001B[31m";
-    private final String ANSIYELLOW = "\u001B[33m";
-
-
+    private final int CHUNK_MESSAGE_SIZE = 5000;
 
     public LoggingAspect(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter,
                          IActionLogPersistencePort actionLogPersistenceAdapter,
-                         ITransactionConvertProviderPort transactionConvertProviderAdapter, IJdbcTemplatePort<ActionLog> actionLogJdbcTemplateAdapter) {
+                         ITransactionConvertProviderPort transactionConvertProviderAdapter)
+    {
         this.transactionRabbitMQTemplateAdapter = transactionRabbitMQTemplateAdapter;
         this.actionLogPersistenceAdapter = actionLogPersistenceAdapter;
         this.transactionConvertProviderAdapter = transactionConvertProviderAdapter;
-        this.actionLogJdbcTemplateAdapter = actionLogJdbcTemplateAdapter;
     }
 
-    @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) && args(status, userId, minAmount, maxAmount, transactionId, page, size)")
-    public void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, int page, int size) {
+    @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) &&  args(status, userId, minAmount, maxAmount, transactionId, nextPagingState, size)")
+    public void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size) {
         String action = "Filter Transactions";
         String details = String.format("Filter applied - Status: %s, UserId: %s, MinAmount: %s, MaxAmount: %s, TransactionId: %s, Page: %d, Size: %d",
-                status, userId, minAmount, maxAmount, transactionId, page, size);
+                status, userId, minAmount, maxAmount, transactionId, nextPagingState, size);
         String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
 
         transactionRabbitMQTemplateAdapter.send(new String[]{actionLogMessage});
@@ -102,19 +96,15 @@ public class LoggingAspect {
     @RabbitListener(queues = "${spring.rabbitmq.queue.name}")
     public void actionLogEvent(String[] data) {
 
-        List<ActionLog> actionLogs = new ArrayList<>();
-        for (String actionLogMessage : data) {
+        List<Log> actionLogs = new ArrayList<>();
+                    for (String actionLogMessage : data) {
             String[] actionLogData = actionLogMessage.split(SEPARATOR);
-            ActionLog actionLog = new ActionLog(actionLogData[0], actionLogData[1]);
+            Log actionLog = new Log(actionLogData[0], actionLogData[1]);
             actionLogs.add(actionLog);
         }
-
-        actionLogJdbcTemplateAdapter.saveAll(actionLogs);
-
+        actionLogPersistenceAdapter.saveAll(actionLogs);
+        //actionLogJdbcTemplateAdapter.saveAll(actionLogs);
         // print count of action logs
         System.out.println(" [x] Received '" + actionLogs.size() + " action logs");
-        //actionLogs.forEach(actionLog -> {
-        //    System.out.println(" [x] Received '" + actionLog + "'");
-        //});
     }
 }

@@ -1,9 +1,9 @@
 package org.dev.paymentprocessingdashboard.application.port.out;
 
-import org.dev.paymentprocessingdashboard.domain.ActionLog;
+import org.dev.paymentprocessingdashboard.domain.Log;
 import java.util.List;
 
 public interface IActionLogPersistencePort {
-    void save(ActionLog actionLog);
-    void saveAll(List<ActionLog> actionLogs);
+    void save(Log actionLog);
+    void saveAll(List<Log> actionLogs);
 }

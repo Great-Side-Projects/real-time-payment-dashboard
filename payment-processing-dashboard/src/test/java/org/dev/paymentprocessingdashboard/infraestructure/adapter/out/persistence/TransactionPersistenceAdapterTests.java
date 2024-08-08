@@ -1,9 +1,7 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.dev.paymentprocessingdashboard.infraestructure.adapter.TransactionSpecificationBuilderAdapter;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionRepository;
-import org.dev.paymentprocessingdashboard.application.port.ITransactionSpecificationBuilderPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,11 +1,10 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
-import org.dev.paymentprocessingdashboard.domain.ActionLog;
+import org.dev.paymentprocessingdashboard.domain.Log;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.dev.paymentprocessingdashboard.domain.TransactionPerMinuteSummary;
 import org.dev.paymentprocessingdashboard.domain.TransactionPerMinuteSummaryProjection;
 
-import java.time.LocalDateTime;
 public class TransactionMapper {
     public static TransactionEntity toTransactionEntity(Transaction transaction) {
         TransactionEntity transactionEntity = new TransactionEntity();
@@ -36,11 +35,10 @@ public class TransactionMapper {
                 transactionPerMinuteSummaryProjection.getTotalTransactions()
         );
     }
-    public static ActionLogEntity toActionLogEntity(ActionLog actionLog) {
-        ActionLogEntity log = new ActionLogEntity();
+    public static LogEntity toLogEntity(Log actionLog) {
+        LogEntity log = new LogEntity();
         log.setAction(actionLog.getAction());
         log.setDetails(actionLog.getDetails());
-        log.setTimestamp(LocalDateTime.now());
         return log;
     }
 }
