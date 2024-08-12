@@ -15,4 +15,7 @@ public interface ITransactionServicePort {
     List<Transaction> processTransaction(List<Transaction> transactions);
     TotalTransactionSummary totalTransactionSummary();
     TotalTransactionPerMinuteSummary summaryTransactionsPerMinute();
+    TotalTransactionSummary getTransactionSummary();
+    TotalTransactionSummary getTransactionSummaryByStatus(String status);
+    TotalTransactionSummary getTransactionSummaryByUserId(String userId);
 }

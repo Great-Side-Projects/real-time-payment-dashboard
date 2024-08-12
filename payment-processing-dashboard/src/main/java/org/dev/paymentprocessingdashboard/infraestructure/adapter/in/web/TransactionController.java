@@ -1,6 +1,5 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.in.web;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,12 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServicePort;
 import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessingdashboard.common.WebAdapter;
+import org.dev.paymentprocessingdashboard.domain.TotalTransactionPerMinuteSummary;
+import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.ByteBuffer;
 import java.util.List;
 
 @WebAdapter
@@ -66,4 +63,43 @@ public class TransactionController {
         transactionService.processTransaction(transactions);
     }
 
+    @Operation(summary = "Total transaction summary",
+            description = "Get total transaction summary", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Total transaction summary",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TotalTransactionSummary.class)) })
+    @GetMapping("/summary")
+    public TotalTransactionSummary totalTransactionSummary() {
+        return transactionService.totalTransactionSummary();
+    }
+
+    @Operation(summary = "Total transaction summary by status",
+            description = "Get total transaction summary by status", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Total transaction summary by status",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TotalTransactionSummary.class)) })
+    @GetMapping("/summary/status/{status}")
+    public TotalTransactionSummary totalTransactionSummaryByStatus(
+            @Parameter(description = "Transaction status")
+            @PathVariable String status) {
+        return transactionService.getTransactionSummaryByStatus(status);
+    }
+
+    @Operation(summary = "Total transaction summary by user id",
+            description = "Get total transaction summary by user id", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Total transaction summary by user id",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TotalTransactionSummary.class)) })
+    @GetMapping("/summary/user/{userId}")
+    public TotalTransactionSummary totalTransactionSummaryByUserId(
+            @Parameter(description = "User id")
+            @PathVariable String userId) {
+        return transactionService.getTransactionSummaryByUserId(userId);
+    }
+
+    @Operation(summary = "Transactions per minute summary",
+            description = "Get transactions per minute summary", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Transactions per minute summary",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TotalTransactionPerMinuteSummary.class)) })
+    @GetMapping("/summary/transactions-per-minute")
+    public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
+        return transactionService.summaryTransactionsPerMinute();
+    }
 }

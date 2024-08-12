@@ -1,38 +1,23 @@
 package org.dev.paymentprocessingdashboard.domain;
 
-import java.util.List;
 import lombok.Getter;
 
 @Getter
 public class TotalTransactionSummary {
 
-    private List<TransactionSummaryProjection> transactionSumaries;
-    private double totalProcessedAmount;
-    private long totalSuccessTransactions;
-    private long totalFailedTransactions;
-    private String totalTransactionsPerUser;
+    private long totalCount;
+    private double totalValue;
 
-
-    public TotalTransactionSummary(List<TransactionSummaryProjection> transactionSumaries) {
-        BuildTotalTransactionSumary(transactionSumaries);
-    }
-
-    private void BuildTotalTransactionSumary( List<TransactionSummaryProjection> transactionSumaries) {
-        this.totalProcessedAmount = transactionSumaries.stream().mapToDouble(TransactionSummaryProjection::getTotalAmount).sum();
-        this.totalSuccessTransactions = transactionSumaries.stream().mapToLong(TransactionSummaryProjection::getTotalSuccess).sum();
-        this.totalFailedTransactions = transactionSumaries.stream().mapToLong(TransactionSummaryProjection::getTotalFailed).sum();
-        this.totalTransactionsPerUser = transactionSumaries.stream()
-                .map(transactionSumary -> "Userid " + transactionSumary.getUserId() + ": Total transactions: " + transactionSumary.getTotalTransactions())
-                .reduce((s1, s2) -> s1 + ", " + s2).orElse("No transactions");
+    public TotalTransactionSummary(long totalCount, double totalValue) {
+        this.totalCount = totalCount;
+        this.totalValue = totalValue;
     }
 
     @Override
     public String toString() {
         return "*** Total Transaction Summary *** " + "\n" +
-                "Total processed amount: $" + String.format("%.2f", this.totalProcessedAmount) + "\n" +
-                "Number of successful transactions: " + this.totalSuccessTransactions + "\n" +
-                "Number of failed transactions: " + this.totalFailedTransactions + "\n" +
-                "Number of transactions per user: " + this.totalTransactionsPerUser +
+                "Total processed value: $" + String.format("%.2f", this.totalValue) + "\n" +
+                "Number of transactions: " + this.totalCount + "\n" +
                 "\n---------------------------------";
     }
 

@@ -2,10 +2,10 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persisten
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.Indexed;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
-
 import java.util.UUID;
 
 @Getter
@@ -13,16 +13,21 @@ import java.util.UUID;
 @Table("transaction")
 public class TransactionEntity {
 
-    @Id
-    private UUID rowid = UUID.randomUUID();
     @Indexed
+    private UUID rowid = UUID.randomUUID();
+
+    @PrimaryKeyColumn(name = "id", type = PrimaryKeyType.PARTITIONED)
     private String id;
+
     @Indexed
     private String userid;
+
     @Indexed
     private double amount;
+
     @Indexed
     private String status;
+
     private String time;
     private String location;
 }

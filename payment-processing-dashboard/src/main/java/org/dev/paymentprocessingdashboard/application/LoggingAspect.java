@@ -94,7 +94,7 @@ public class LoggingAspect {
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.name}")
-    public void actionLogEvent(String[] data) {
+    public void LogEvent(String[] data) {
 
         List<Log> actionLogs = new ArrayList<>();
                     for (String actionLogMessage : data) {

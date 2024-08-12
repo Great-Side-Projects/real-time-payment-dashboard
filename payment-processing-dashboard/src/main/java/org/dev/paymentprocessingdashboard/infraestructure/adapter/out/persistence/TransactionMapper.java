@@ -1,9 +1,6 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
 
-import org.dev.paymentprocessingdashboard.domain.Log;
-import org.dev.paymentprocessingdashboard.domain.Transaction;
-import org.dev.paymentprocessingdashboard.domain.TransactionPerMinuteSummary;
-import org.dev.paymentprocessingdashboard.domain.TransactionPerMinuteSummaryProjection;
+import org.dev.paymentprocessingdashboard.domain.*;
 
 public class TransactionMapper {
     public static TransactionEntity toTransactionEntity(Transaction transaction) {
@@ -35,10 +32,18 @@ public class TransactionMapper {
                 transactionPerMinuteSummaryProjection.getTotalTransactions()
         );
     }
+
     public static LogEntity toLogEntity(Log actionLog) {
         LogEntity log = new LogEntity();
         log.setAction(actionLog.getAction());
         log.setDetails(actionLog.getDetails());
         return log;
     }
+
+    public static TotalTransactionSummary toTotalTransactionSummary(TransactionSummary transactionSummary) {
+        return new TotalTransactionSummary(
+                transactionSummary.getTotalCount(),
+                transactionSummary.getTotalValue());
+    }
+
 }

@@ -19,6 +19,9 @@ import java.util.List;
 public class TransactionTemplateAdapter implements ITransactionTemplatePort {
     private final CqlSession cqlSession;
     private final String INSERT_TRANSACTION = "INSERT INTO transaction (rowid, id, userid, amount, status, time, location) VALUES (? ,?, ?, ?, ?, ?, ?)";
+    private final String SELECT_TRANSACTION_SUMMARY = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction";
+    private final String SELECT_TRANSACTION_SUMMARY_BY_STATUS = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction WHERE status = ?";
+    private final String SELECT_TRANSACTION_SUMMARY_BY_USERID = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction WHERE userid = ?";
     private final int batchSize = 5000; //65535 max
     private final CassandraTemplate cassandraTemplate;
 
@@ -87,5 +90,25 @@ public class TransactionTemplateAdapter implements ITransactionTemplatePort {
             }
         }
         return CassandraPageRequest.of(PageRequest.of(0, pageSize), null);
+    }
+
+    @Override
+    public TransactionSummary getTransactionSummary() {
+        return cassandraTemplate.selectOne(SELECT_TRANSACTION_SUMMARY, TransactionSummary.class);
+    }
+
+    @Override
+    public TransactionSummary getTransactionSummaryByStatus(String status) {
+
+        return cassandraTemplate.selectOne(
+                SimpleStatement.newInstance(SELECT_TRANSACTION_SUMMARY_BY_STATUS, status),
+                TransactionSummary.class);
+    }
+
+    @Override
+    public TransactionSummary getTransactionSummaryByUserId(String userId) {
+        return cassandraTemplate.selectOne(
+                SimpleStatement.newInstance(SELECT_TRANSACTION_SUMMARY_BY_USERID, userId),
+                TransactionSummary.class);
     }
 }

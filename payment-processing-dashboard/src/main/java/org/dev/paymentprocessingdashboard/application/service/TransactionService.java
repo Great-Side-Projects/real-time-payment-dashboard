@@ -9,8 +9,7 @@ import org.dev.paymentprocessingdashboard.domain.TotalTransactionPerMinuteSummar
 import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.data.domain.Slice;
-
-import java.nio.ByteBuffer;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @UseCase
@@ -40,6 +39,7 @@ public class TransactionService implements ITransactionServicePort {
         return transactionFilterResponse;
     }
 
+    @Transactional
     @Override
     public List<Transaction> processTransaction(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
@@ -56,11 +56,26 @@ public class TransactionService implements ITransactionServicePort {
 
     @Override
     public TotalTransactionSummary totalTransactionSummary() {
-        return transactionPersistenceAdapter.totalTransactionSummary();
+        return transactionPersistenceAdapter.getTransactionSummary();
     }
 
     @Override
     public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
         return transactionPersistenceAdapter.summaryTransactionsPerMinute();
+    }
+
+    @Override
+    public TotalTransactionSummary getTransactionSummary() {
+        return transactionPersistenceAdapter.getTransactionSummary();
+    }
+
+    @Override
+    public TotalTransactionSummary getTransactionSummaryByStatus(String status) {
+        return transactionPersistenceAdapter.getTransactionSummaryByStatus(status);
+    }
+
+    @Override
+    public TotalTransactionSummary getTransactionSummaryByUserId(String userId) {
+        return transactionPersistenceAdapter.getTransactionSummaryByUserId(userId);
     }
 }

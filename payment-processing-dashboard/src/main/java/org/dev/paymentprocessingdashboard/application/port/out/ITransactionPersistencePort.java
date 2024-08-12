@@ -14,8 +14,11 @@ import java.util.List;
 public interface ITransactionPersistencePort {
     Transaction save(Transaction transaction);
     void saveAll(List<Transaction> transactions);
-    TotalTransactionSummary totalTransactionSummary();
+    TotalTransactionSummary getTransactionSummary();
+    TotalTransactionSummary getTransactionSummaryByStatus(String status);
+    TotalTransactionSummary getTransactionSummaryByUserId(String userId);
     TotalTransactionPerMinuteSummary summaryTransactionsPerMinute();
     Slice<Transaction> findAll(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size);
     String getNextPagingState(Pageable cassandraPageRequest);
+
 }

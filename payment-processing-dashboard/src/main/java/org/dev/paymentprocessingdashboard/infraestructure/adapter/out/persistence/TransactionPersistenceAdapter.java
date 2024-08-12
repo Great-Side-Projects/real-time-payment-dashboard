@@ -20,7 +20,6 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     private final ITransactionRepository transactionRepository;
     private static final int PAGE_SIZE = 100;
     private final ITransactionTemplatePort transactionTemplateAdapter;
-    private static final String DEFAULT_CURSOR_MARK = "-1";
 
     public TransactionPersistenceAdapter(ITransactionRepository transactionRepository,
                                          ITransactionTemplatePort transactionTemplateAdapter) {
@@ -56,9 +55,28 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
     }
 
     @Override
-    public TotalTransactionSummary totalTransactionSummary() {
-        TotalTransactionSummary totalTransactionSummary = new TotalTransactionSummary(transactionRepository.findTransactionSummary());
+    public TotalTransactionSummary getTransactionSummary() {
+
+        TotalTransactionSummary totalTransactionSummary = TransactionMapper.toTotalTransactionSummary(
+                transactionTemplateAdapter.getTransactionSummary()
+        );
         return totalTransactionSummary;
+    }
+
+    @Override
+    public TotalTransactionSummary getTransactionSummaryByStatus(String status) {
+        TotalTransactionSummary totalTransactionSummaryByStatus = TransactionMapper.toTotalTransactionSummary(
+                transactionTemplateAdapter.getTransactionSummaryByStatus(status)
+        );
+        return totalTransactionSummaryByStatus;
+    }
+
+    @Override
+    public TotalTransactionSummary getTransactionSummaryByUserId(String userId) {
+        TotalTransactionSummary totalTransactionSummaryByUserId = TransactionMapper.toTotalTransactionSummary(
+                transactionTemplateAdapter.getTransactionSummaryByUserId(userId)
+        );
+        return totalTransactionSummaryByUserId;
     }
 
     @Override
@@ -67,7 +85,7 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
         List<TransactionPerMinuteSummary> totalTransactionPerMinuteSummary = transactionPerMinuteSummariesProjection.stream()
                 .map(TransactionMapper::toTransactionPerMinuteSummary)
                 .collect(Collectors.toList());
-        return new TotalTransactionPerMinuteSummary(null);//totalTransactionPerMinuteSummary);
+        return new TotalTransactionPerMinuteSummary(totalTransactionPerMinuteSummary);
     }
 
     @Override
@@ -89,7 +107,7 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
 
     @Override
     public String getNextPagingState(Pageable cassandraPageRequest) {
-        ByteBuffer pagingState = ((CassandraPageRequest)cassandraPageRequest).getPagingState();
+        ByteBuffer pagingState = ((CassandraPageRequest) cassandraPageRequest).getPagingState();
         try {
             return com.datastax.oss.protocol.internal.util.Bytes.toHexString(pagingState);
         } catch (Exception e) {
