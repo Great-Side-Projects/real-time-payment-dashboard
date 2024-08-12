@@ -16,8 +16,8 @@ public class FileReaderAdapter implements IFileReaderPort {
 
     private static final String LOG_FILE_PATH = "log-generator/logs/transactions.log";
     private static final String POSITION_FILE_PATH = "payment-processing-dashboard/last_known_position.txt";
-    private final Path path = Paths.get(LOG_FILE_PATH);
-    private static Path positionFilePath;
+    private static Path path = Paths.get(LOG_FILE_PATH);
+    private static Path positionFilePath = Paths.get(POSITION_FILE_PATH);
     private List<String> lines = new ArrayList<>();
 
     // This static block is used to determine the positionFilePath based on the user.dir system property
@@ -26,8 +26,7 @@ public class FileReaderAdapter implements IFileReaderPort {
         String userDir = System.getProperty("user.dir");
         if (userDir.endsWith("payment-processing-dashboard")) {
             positionFilePath = Paths.get(userDir, "last_known_position.txt");
-        } else {
-            positionFilePath = Paths.get(userDir, POSITION_FILE_PATH);
+            path = Paths.get(userDir.replace("payment-processing-dashboard",""), LOG_FILE_PATH);
         }
     }
     private long lastKnownPosition = 0;
