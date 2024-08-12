@@ -103,8 +103,6 @@ public class LoggingAspect {
             actionLogs.add(actionLog);
         }
         actionLogPersistenceAdapter.saveAll(actionLogs);
-        //actionLogJdbcTemplateAdapter.saveAll(actionLogs);
-        // print count of action logs
         System.out.println(" [x] Received '" + actionLogs.size() + " action logs");
     }
 }
