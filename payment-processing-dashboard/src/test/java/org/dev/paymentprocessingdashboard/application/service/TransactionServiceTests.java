@@ -1,6 +1,7 @@
 package org.dev.paymentprocessingdashboard.application.service;
 
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
+import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
 import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -37,22 +36,22 @@ class TransactionServiceTests {
 
         Transaction transaction = new Transaction("id", "userid", 10.0, "status","timestamp", "location");
         Page<Transaction> expectedPage = new PageImpl<>(Collections.singletonList(transaction));
-        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(expectedPage);
 
-        Page<Transaction> result = transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", 0, 10);
+        TransactionFilterResponse result =  transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", "", 10);
 
-        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getNumberOfElements());
     }
 
     @Test
     @DisplayName("Filter transactions with no matching criteria returns empty page")
     void filterTransactionsWithNoMatchingCriteriaReturnsEmptyPage() {
         Page<Transaction> expectedPage = Page.empty();
-        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(expectedPage);
 
-        Page<Transaction> result = transactionService.filterTransactions(null, null, null, null, null, 0, 10);
+        TransactionFilterResponse result = transactionService.filterTransactions(null, null, null, null, null, "", 10);
 
-        assertEquals(0, result.getTotalElements());
+        assertEquals(0, result.getNumberOfElements());
     }
 
     @Test
@@ -60,11 +59,11 @@ class TransactionServiceTests {
     void filterTransactionsWithMaximumPageSizeLimitsResults() {
         Transaction transaction = new Transaction("id", "userid", 10.0, "status","timestamp", "location");
         Page<Transaction> expectedPage = new PageImpl<>(Collections.nCopies(5, transaction));
-        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(expectedPage);
 
-        Page<Transaction> result = transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", 0, 5);
+        TransactionFilterResponse result = transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", "", 5);
 
-        assertEquals(5, result.getTotalElements());
+        assertEquals(5, result.getNumberOfElements());
     }
 
     @Test
@@ -72,10 +71,10 @@ class TransactionServiceTests {
     void filterTransactionsWithInvalidPageNumberReturnsFirstPage() {
         Transaction transaction = new Transaction("id", "userid", 10.0, "status","timestamp", "location");
         Page<Transaction> expectedPage = new PageImpl<>(Collections.singletonList(transaction));
-        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+        when(transactionPersistenceAdapter.findAll(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(expectedPage);
 
-        Page<Transaction> result = transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", -1, 10);
+        TransactionFilterResponse result = transactionService.filterTransactions("status", "userId", 10.0, 100.0, "transactionId", "-1", 10);
 
-        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getNumberOfElements());
     }
 }

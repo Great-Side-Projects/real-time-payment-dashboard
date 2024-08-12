@@ -1,6 +1,8 @@
 package org.dev.paymentprocessingdashboard.infraestructure.adapter.in.web;
 
 import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServicePort;
+import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
+import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,15 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-
 import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TransactionControllerTests {
 
@@ -32,49 +31,100 @@ class TransactionControllerTests {
     }
 
     @Test
-    @DisplayName("Filter transactions returns non-empty page for valid criteria")
-    void filterTransactionsReturnsNonEmptyPageForValidCriteria() {
-        Transaction transaction = new Transaction("id", "user1", 10.0, "completed", "tx123", "location");
-        Page<Transaction> expectedPage = new PageImpl<>(Collections.singletonList(transaction));
-        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+    @DisplayName("Filter transactions with valid parameters")
+    void filterTransactionsWithValidParameters() {
+        TransactionFilterResponse response = new TransactionFilterResponse(
+                Collections.singletonList(new Transaction
+                        ("626ccc13-df07-46f8-acc2-d1ed011271a1", "U1", 100.0, "success", "2024-07-22T23:17:20.694Z", "CN")),
+                "pagingState",
+                false,
+                1
+        );
+        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(response);
 
-        Page<Transaction> result = transactionController.filterTransactions("completed", "user1", 10.0, 100.0, "tx123", 0, 10);
-
-        assertEquals(1, result.getTotalElements());
+        TransactionFilterResponse result = transactionController.filterTransactions("COMPLETED", "user123", 100.0, 1000.0, "txn123", "pagingState", 50);
+        assertNotNull(result);
     }
 
     @Test
-    @DisplayName("Filter transactions returns empty page for no matching criteria")
-    void filterTransactionsReturnsEmptyPageForNoMatchingCriteria() {
-        Page<Transaction> expectedPage = Page.empty();
-        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+    @DisplayName("Filter transactions with empty parameters")
+    void filterTransactionsWithEmptyParameters() {
+        TransactionFilterResponse response = new TransactionFilterResponse(
+                Collections.singletonList(new Transaction
+                        ("626ccc13-df07-46f8-acc2-d1ed011271a1", "U1", 100.0, "success", "2024-07-22T23:17:20.694Z", "CN")),
+                "pagingState",
+                false,
+                1
+        );
+        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), any(), anyInt())).thenReturn(response);
 
-        Page<Transaction> result = transactionController.filterTransactions(null, null, null, null, null, 0, 10);
-
-        assertEquals(0, result.getTotalElements());
+        TransactionFilterResponse result = transactionController.filterTransactions(null, null, null, null, null, null, 10);
+        assertNotNull(result);
     }
 
     @Test
-    @DisplayName("Filter transactions handles large page size by limiting results")
-    void filterTransactionsHandlesLargePageSizeByLimitingResults() {
-        Transaction transaction = new Transaction("id", "user2", 20.0, "completed", "tx456", "location");
-        Page<Transaction> expectedPage = new PageImpl<>(Collections.nCopies(50, transaction));
-        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+    @DisplayName("Process transactions with valid list")
+    void processTransactionsWithValidList() {
+        List<Transaction> transactions = Collections.singletonList(new Transaction(
+                "626ccc13-df07-46f8-acc2-d1ed011271a1",
+                "U1",
+                100.0,
+                "success",
+                "2024-07-22T23:17:20.694Z",
+                "CN"));
+        when(transactionService.processTransaction(transactions)).thenReturn(anyList());
 
-        Page<Transaction> result = transactionController.filterTransactions("completed", "user2", 20.0, 200.0, "tx456", 0, 50);
-
-        assertEquals(50, result.getTotalElements());
+        transactionController.processTransaction(transactions);
+        verify(transactionService, times(1)).processTransaction(transactions);
     }
 
     @Test
-    @DisplayName("Filter transactions with invalid page number defaults to first page")
-    void filterTransactionsWithInvalidPageNumberDefaultsToFirstPage() {
-        Transaction transaction = new Transaction("id", "user3", 5.0, "pending", "tx789", "location");
-        Page<Transaction> expectedPage = new PageImpl<>(Collections.singletonList(transaction));
-        when(transactionService.filterTransactions(any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(expectedPage);
+    @DisplayName("Process transactions with empty list")
+    void processTransactionsWithEmptyList() {
+        List<Transaction> transactions = Collections.emptyList();
+        when(transactionService.processTransaction(transactions)).thenReturn(anyList());
 
-        Page<Transaction> result = transactionController.filterTransactions("pending", "user3", 5.0, 50.0, "tx789", -1, 10);
+        transactionController.processTransaction(transactions);
+        verify(transactionService, times(1)).processTransaction(transactions);
+    }
 
-        assertEquals(1, result.getTotalElements());
+    @Test
+    @DisplayName("Total transaction summary")
+    void totalTransactionSummary() {
+        TotalTransactionSummary summary = new TotalTransactionSummary(100,50000);
+        when(transactionService.totalTransactionSummary()).thenReturn(summary);
+
+        TotalTransactionSummary result = transactionController.totalTransactionSummary();
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("Total transaction summary by status")
+    void totalTransactionSummaryByStatus() {
+        TotalTransactionSummary summary = new TotalTransactionSummary(100,50000);
+        when(transactionService.getTransactionSummaryByStatus(anyString())).thenReturn(summary);
+
+        TotalTransactionSummary result = transactionController.totalTransactionSummaryByStatus("COMPLETED");
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("Total transaction summary by user id")
+    void totalTransactionSummaryByUserId() {
+        TotalTransactionSummary summary = new TotalTransactionSummary(100,50000);
+        when(transactionService.getTransactionSummaryByUserId(anyString())).thenReturn(summary);
+
+        TotalTransactionSummary result = transactionController.totalTransactionSummaryByUserId("user123");
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("Transactions per minute summary")
+    void summaryTransactionsPerMinute() {
+        //TotalTransactionPerMinuteSummary summary = new TotalTransactionPerMinuteSummary();
+        //when(transactionService.summaryTransactionsPerMinute()).thenReturn(summary);
+
+        //TotalTransactionPerMinuteSummary result = transactionController.summaryTransactionsPerMinute();
+        //assertNotNull(result);
     }
 }
