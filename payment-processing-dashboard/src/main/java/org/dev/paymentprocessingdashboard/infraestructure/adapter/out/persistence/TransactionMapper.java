@@ -33,17 +33,9 @@ public class TransactionMapper {
         );
     }
 
-    public static LogEntity toLogEntity(Log actionLog) {
-        LogEntity log = new LogEntity();
-        log.setAction(actionLog.getAction());
-        log.setDetails(actionLog.getDetails());
-        return log;
-    }
-
     public static TotalTransactionSummary toTotalTransactionSummary(TransactionSummary transactionSummary) {
         return new TotalTransactionSummary(
                 transactionSummary.getTotalCount(),
                 transactionSummary.getTotalValue());
     }
-
 }
