@@ -1,5 +1,6 @@
 package org.dev.paymentlog;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -7,7 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class PaymentLogApplicationTests {
 
     @Test
-    void contextLoads() {
+    @DisplayName("Application context loads successfully")
+    void applicationContextLoadsSuccessfully() {
+        PaymentLogApplication.main(new String[]{});
     }
-
 }
