@@ -1,12 +1,11 @@
-package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
+package org.dev.paymentlog.infraestructure.adapter.out.persistence;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BatchStatement;
 import com.datastax.oss.driver.api.core.cql.BatchStatementBuilder;
 import com.datastax.oss.driver.api.core.cql.BatchType;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
-import org.dev.paymentprocessingdashboard.application.port.out.ILogTemplatePort;
-import org.dev.paymentprocessingdashboard.application.port.out.ITransactionTemplatePort;
+import org.dev.paymentlog.application.port.out.ILogTemplatePort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

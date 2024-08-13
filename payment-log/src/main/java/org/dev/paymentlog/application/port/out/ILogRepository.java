@@ -1,6 +1,6 @@
-package org.dev.paymentprocessingdashboard.application.port.out;
+package org.dev.paymentlog.application.port.out;
 
-import org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence.LogEntity;
+import org.dev.paymentlog.infraestructure.adapter.out.persistence.LogEntity;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 
 

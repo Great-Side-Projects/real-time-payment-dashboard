@@ -1,16 +1,16 @@
-package org.dev.paymentprocessingdashboard.infraestructure.adapter.out.persistence;
+package org.dev.paymentlog.infraestructure.adapter.out.persistence;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import org.dev.paymentprocessingdashboard.application.port.out.IActionLogPersistencePort;
-import org.dev.paymentprocessingdashboard.application.port.out.ILogRepository;
-import org.dev.paymentprocessingdashboard.application.port.out.ILogTemplatePort;
-import org.dev.paymentprocessingdashboard.common.PersistenceAdapter;
-import org.dev.paymentprocessingdashboard.domain.Log;
+import org.dev.paymentlog.common.PersistenceAdapter;
+import org.dev.paymentlog.domain.Log;
+import org.dev.paymentlog.application.port.out.ILogPersistencePort;
+import org.dev.paymentlog.application.port.out.ILogRepository;
+import org.dev.paymentlog.application.port.out.ILogTemplatePort;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @PersistenceAdapter
-public class LogPersistenceAdapter implements IActionLogPersistencePort {
+public class LogPersistenceAdapter implements ILogPersistencePort {
 
     private final ILogRepository logRepository;
     private final ILogTemplatePort logTemplateAdapter;
@@ -22,11 +22,11 @@ public class LogPersistenceAdapter implements IActionLogPersistencePort {
     }
 
     @Override
-    @CircuitBreaker(name = "actionLogPersistence", fallbackMethod = "fallbackSave")
-    public void save(Log actionLog) {
-        LogEntity log = TransactionMapper.toLogEntity(actionLog);
+    @CircuitBreaker(name = "logPersistence", fallbackMethod = "fallbackSave")
+    public void save(Log log) {
+        LogEntity logEntity = LogMapper.toLogEntity(log);
         try {
-            logRepository.save(log);
+            logRepository.save(logEntity);
         } catch (Exception e) {
             System.out.println("Error saving action log: " + e.getMessage());
             throw new RuntimeException("Error saving action log");
@@ -41,11 +41,11 @@ public class LogPersistenceAdapter implements IActionLogPersistencePort {
     }
 
     @Override
-    @CircuitBreaker(name = "actionLogPersistence", fallbackMethod = "fallbackSaveAll")
+    @CircuitBreaker(name = "logPersistence", fallbackMethod = "fallbackSaveAll")
     public void saveAll(List<Log> actionLogs) {
 
         List<LogEntity> logs = actionLogs.stream()
-                .map(TransactionMapper::toLogEntity)
+                .map(LogMapper::toLogEntity)
                 .collect(Collectors.toList());
         try {
             logTemplateAdapter.saveAll(logs);
