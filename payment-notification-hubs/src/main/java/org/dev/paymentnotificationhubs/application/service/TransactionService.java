@@ -5,7 +5,6 @@ import org.dev.paymentnotificationhubs.common.UseCase;
 import org.dev.paymentnotificationhubs.domain.Transaction;
 import org.dev.paymentnotificationhubs.domain.event.Event;
 import org.dev.paymentnotificationhubs.domain.event.TransactionProcessedEvent;
-
 import java.util.List;
 
 @UseCase
