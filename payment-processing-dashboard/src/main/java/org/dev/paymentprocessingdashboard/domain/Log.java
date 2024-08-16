@@ -1,6 +1,7 @@
 package org.dev.paymentprocessingdashboard.domain;
 
 public class Log {
+  /*
     private String action;
     private String details;
 
@@ -24,4 +25,6 @@ public class Log {
                 ", details='" + details + '\'' +
                 '}';
     }
+
+   */
 }

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServicePort;
 import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessingdashboard.common.WebAdapter;
-import org.dev.paymentprocessingdashboard.domain.TotalTransactionPerMinuteSummary;
 import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.web.bind.annotation.*;
@@ -92,14 +91,5 @@ public class TransactionController {
             @Parameter(description = "User id")
             @PathVariable String userId) {
         return transactionService.getTransactionSummaryByUserId(userId);
-    }
-
-    @Operation(summary = "Transactions per minute summary",
-            description = "Get transactions per minute summary", tags = "Transactions")
-    @ApiResponse(responseCode = "200", description = "Transactions per minute summary",
-            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = TotalTransactionPerMinuteSummary.class)) })
-    @GetMapping("/summary/transactions-per-minute")
-    public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
-        return transactionService.summaryTransactionsPerMinute();
     }
 }

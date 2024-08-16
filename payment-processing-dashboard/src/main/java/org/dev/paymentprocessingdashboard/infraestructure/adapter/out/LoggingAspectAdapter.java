@@ -3,7 +3,6 @@ package org.dev.paymentprocessingdashboard.infraestructure.adapter.out;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.dev.paymentprocessingdashboard.application.port.ITransactionConvertProviderPort;
 import org.dev.paymentprocessingdashboard.application.port.out.ILoggingAspectPort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
@@ -15,16 +14,12 @@ import java.util.List;
 @Component
 public class LoggingAspectAdapter implements ILoggingAspectPort {
 
-    private final ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter;
-    private final ITransactionConvertProviderPort transactionConvertProviderAdapter;
+    private final ITransactionEventTemplatePort<String[]> transactionRabbitMQTemplateAdapter;
     private final String SEPARATOR = "::";
     private final int CHUNK_MESSAGE_SIZE = 5000;
 
-    public LoggingAspectAdapter(ITransactionEventTemplatePort transactionRabbitMQTemplateAdapter,
-                                ITransactionConvertProviderPort transactionConvertProviderAdapter)
-    {
+    public LoggingAspectAdapter(ITransactionEventTemplatePort<String[]> transactionRabbitMQTemplateAdapter) {
         this.transactionRabbitMQTemplateAdapter = transactionRabbitMQTemplateAdapter;
-        this.transactionConvertProviderAdapter = transactionConvertProviderAdapter;
     }
 
     @After("execution(* org.dev.paymentprocessingdashboard.application.service.TransactionService.filterTransactions(..)) &&  args(status, userId, minAmount, maxAmount, transactionId, nextPagingState, size)")
@@ -52,37 +47,7 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
                     transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             logMessages.add(actionLogMessage);
-            if (logMessages.size() == CHUNK_MESSAGE_SIZE)
-            {
-                transactionRabbitMQTemplateAdapter.send(logMessages.toArray(new String[0]));
-                logMessages.clear();
-            }
-        });
-
-        if (logMessages.size() > 0)
-            transactionRabbitMQTemplateAdapter.send(logMessages.toArray(new String[0]));
-    }
-
-
-    @AfterReturning(value = "execution(* org.dev.paymentprocessingdashboard.infraestructure.adapter.out.TransactionSendNotificationAdapter.send(..))", returning = "notifiedTransactions")
-    @Override
-    public void logNotification(List<Transaction> notifiedTransactions) {
-
-        if (notifiedTransactions.isEmpty()) {
-            return;
-        }
-
-        List<String> logMessages = new ArrayList<>();
-        notifiedTransactions.forEach(transaction -> {
-            String action = "Send Notification";
-            // clean ANSI color red and
-
-            String details = String.format("Send notification - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
-                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
-            String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
-            logMessages.add(actionLogMessage);
-            if (logMessages.size() == CHUNK_MESSAGE_SIZE)
-            {
+            if (logMessages.size() == CHUNK_MESSAGE_SIZE) {
                 transactionRabbitMQTemplateAdapter.send(logMessages.toArray(new String[0]));
                 logMessages.clear();
             }

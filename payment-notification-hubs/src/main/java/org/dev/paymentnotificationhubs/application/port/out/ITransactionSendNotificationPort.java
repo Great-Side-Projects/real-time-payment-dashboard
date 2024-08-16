@@ -1,7 +1,6 @@
-package org.dev.paymentprocessingdashboard.application.port.out;
+package org.dev.paymentnotificationhubs.application.port.out;
 
-import org.dev.paymentprocessingdashboard.domain.Transaction;
-
+import org.dev.paymentnotificationhubs.domain.Transaction;
 import java.util.List;
 
 public interface ITransactionSendNotificationPort {

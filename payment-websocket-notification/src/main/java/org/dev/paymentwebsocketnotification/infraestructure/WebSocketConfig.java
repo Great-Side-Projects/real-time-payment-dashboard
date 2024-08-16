@@ -1,4 +1,4 @@
-package org.dev.paymentprocessingdashboard.infraestructure;
+package org.dev.paymentwebsocketnotification.infraestructure;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

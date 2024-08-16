@@ -7,5 +7,4 @@ import java.util.List;
 public interface ILoggingAspectPort {
     void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size);
     void logProcessTransaction(List<Transaction> transactions);
-    void logNotification(List<Transaction> notifiedTransactions);
 }

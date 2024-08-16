@@ -1,11 +1,10 @@
 package org.dev.paymentprocessingdashboard.application.service;
 
 import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServicePort;
+import org.dev.paymentprocessingdashboard.application.port.out.ITransactionEventStreamingPort;
 import org.dev.paymentprocessingdashboard.application.port.out.ITransactionPersistencePort;
-import org.dev.paymentprocessingdashboard.application.port.out.ITransactionSendNotificationPort;
 import org.dev.paymentprocessingdashboard.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessingdashboard.common.UseCase;
-import org.dev.paymentprocessingdashboard.domain.TotalTransactionPerMinuteSummary;
 import org.dev.paymentprocessingdashboard.domain.TotalTransactionSummary;
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.data.domain.Slice;
@@ -16,11 +15,12 @@ import java.util.List;
 public class TransactionService implements ITransactionServicePort {
 
     private final ITransactionPersistencePort transactionPersistenceAdapter;
-    private final ITransactionSendNotificationPort transactionSendNotificationAdapter;
+    private final ITransactionEventStreamingPort<List<Transaction>> transactionEventStreamingAdapter;
 
-    public TransactionService(ITransactionPersistencePort transactionPersistenceAdapter, ITransactionSendNotificationPort transactionSendNotificationAdapter) {
+    public TransactionService(ITransactionPersistencePort transactionPersistenceAdapter,
+                              ITransactionEventStreamingPort<List<Transaction>> transactionEventStreamingAdapter) {
         this.transactionPersistenceAdapter = transactionPersistenceAdapter;
-        this.transactionSendNotificationAdapter = transactionSendNotificationAdapter;
+        this.transactionEventStreamingAdapter = transactionEventStreamingAdapter;
     }
 
     @Override
@@ -29,14 +29,13 @@ public class TransactionService implements ITransactionServicePort {
 
         Slice<Transaction> transactionSlice = transactionPersistenceAdapter.findAll(status, userId, minAmount, maxAmount, transactionId, nextPagingState, size);
         boolean hasNext = transactionSlice.hasNext();
-        TransactionFilterResponse transactionFilterResponse = new TransactionFilterResponse(
+
+        return new TransactionFilterResponse(
                 transactionSlice.getContent(),
                 hasNext ? transactionPersistenceAdapter.getNextPagingState(transactionSlice.getPageable()) : "",
                 hasNext,
                 transactionSlice.getNumberOfElements()
         );
-
-        return transactionFilterResponse;
     }
 
     @Transactional
@@ -49,23 +48,13 @@ public class TransactionService implements ITransactionServicePort {
         long startTime = System.currentTimeMillis();
         transactionPersistenceAdapter.saveAll(transactions);
         long endTime = System.currentTimeMillis();
-        transactionSendNotificationAdapter.send(transactions);
+        transactionEventStreamingAdapter.sendProcessedEvent(transactions);
         System.out.println("Time elapsed: " + (endTime - startTime) / 60000 + ":" + ((endTime - startTime) / 1000) % 60 + ":" + (endTime - startTime) % 1000);
         return transactions;
     }
 
     @Override
     public TotalTransactionSummary totalTransactionSummary() {
-        return transactionPersistenceAdapter.getTransactionSummary();
-    }
-
-    @Override
-    public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
-        return transactionPersistenceAdapter.summaryTransactionsPerMinute();
-    }
-
-    @Override
-    public TotalTransactionSummary getTransactionSummary() {
         return transactionPersistenceAdapter.getTransactionSummary();
     }
 

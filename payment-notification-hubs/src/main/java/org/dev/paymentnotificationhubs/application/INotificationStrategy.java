@@ -1,6 +1,6 @@
-package org.dev.paymentprocessingdashboard.application.port;
+package org.dev.paymentnotificationhubs.application;
 
-import org.dev.paymentprocessingdashboard.domain.Transaction;
+import org.dev.paymentnotificationhubs.domain.Transaction;
 
 public interface INotificationStrategy {
     boolean applies(Transaction transaction);

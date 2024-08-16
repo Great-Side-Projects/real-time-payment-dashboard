@@ -1,4 +1,4 @@
-package org.dev.paymentprocessingdashboard.domain;
+package org.dev.paymentnotificationhubs.domain;
 
 public enum TransactionStatusEnum {
     SUCCESS,

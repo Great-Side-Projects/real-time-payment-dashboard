@@ -5,7 +5,6 @@ import org.dev.paymentprocessingdashboard.application.port.in.ITransactionServic
 import org.dev.paymentprocessingdashboard.domain.Transaction;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -32,12 +31,7 @@ public class LogReader
         }
 
         transactionService.processTransaction(transactions);
-
-        System.out.println(ANSIRESET + transactionService.totalTransactionSummary());
-        System.out.println(transactionService.summaryTransactionsPerMinute());
-
         System.out.println("Number of transactions processed: " + ANSIBLUE + transactions.size() + ANSIRESET);
-
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
         System.out.println("Time duration: " + duration / 60000 + ":" + (duration % 60000) / 1000 + "." + (duration % 1000));

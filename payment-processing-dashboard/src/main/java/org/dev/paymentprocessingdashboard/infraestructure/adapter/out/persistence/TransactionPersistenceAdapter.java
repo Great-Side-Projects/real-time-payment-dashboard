@@ -41,7 +41,6 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
                     .map(TransactionMapper::toTransactionEntity)
                     .collect(Collectors.toList());
             transactionTemplateAdapter.saveAll(transactionEntities);
-
         } catch (Exception e) {
             throw new RuntimeException("Error saving transactions " + e.getMessage());
         }
@@ -52,6 +51,7 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
         //This method will be called when the circuit breaker is open
         //Maybe we can send an email to the admin to notify the error
         System.out.println("Error saving transactions: " + t.getMessage());
+        throw new RuntimeException("Error saving transactions " + t.getMessage());
     }
 
     @Override
@@ -77,15 +77,6 @@ public class TransactionPersistenceAdapter implements ITransactionPersistencePor
                 transactionTemplateAdapter.getTransactionSummaryByUserId(userId)
         );
         return totalTransactionSummaryByUserId;
-    }
-
-    @Override
-    public TotalTransactionPerMinuteSummary summaryTransactionsPerMinute() {
-        List<TransactionPerMinuteSummaryProjection> transactionPerMinuteSummariesProjection = transactionRepository.findTransactionPerMinuteSummary();
-        List<TransactionPerMinuteSummary> totalTransactionPerMinuteSummary = transactionPerMinuteSummariesProjection.stream()
-                .map(TransactionMapper::toTransactionPerMinuteSummary)
-                .collect(Collectors.toList());
-        return new TotalTransactionPerMinuteSummary(totalTransactionPerMinuteSummary);
     }
 
     @Override
