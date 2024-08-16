@@ -18,7 +18,6 @@ public class LoggingAdapter implements ILoggingEventPort {
         this.logPersistenceAdapter = actionLogPersistenceAdapter;
     }
 
-
     @RabbitListener(queues = "${spring.rabbitmq.queue.name}")
     @Override
     public void LogEvent(String[] data) {
