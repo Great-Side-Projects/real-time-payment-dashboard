@@ -2,7 +2,7 @@ package org.dev.paymentprocessing.domain;
 
 public class Transaction {
     private String id;
-    private String userid;
+    private String userId;
     private double amount;
     private String status;
     private String time;
@@ -13,7 +13,7 @@ public class Transaction {
 
     public Transaction(String id, String userid, double amount, String status, String time, String location) {
         this.id = id;
-        this.userid = userid;
+        this.userId = userid;
         this.amount = amount;
         this.status = status;
         this.time = time;
@@ -25,7 +25,7 @@ public class Transaction {
     }
 
     public String getUserId() {
-        return userid;
+        return userId;
     }
 
     public double getAmount() {
@@ -48,6 +48,6 @@ public class Transaction {
     public String toString() {
         return """
                 {"Transaction":{"id":'%s', "userid":'%s', "amount":%f, "status":'%s', "time":'%s', "location":'%s'}}"""
-                .formatted(id, userid, amount, status, time, location);
+                .formatted(id, userId, amount, status, time, location);
     }
 }
