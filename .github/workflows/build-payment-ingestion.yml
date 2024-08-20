@@ -35,3 +35,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_INGESTION }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B -f payment-ingestion/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-ingestion -Dsonar.projectName='payment-ingestion'
+
