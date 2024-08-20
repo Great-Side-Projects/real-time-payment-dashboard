@@ -1,14 +1,15 @@
 package org.dev.paymentnotificationhubs.application.service;
 
+import org.dev.paymentnotificationhubs.application.port.ITransactionServicePort;
 import org.dev.paymentnotificationhubs.application.port.out.ITransactionSendNotificationPort;
 import org.dev.paymentnotificationhubs.common.UseCase;
 import org.dev.paymentnotificationhubs.domain.Transaction;
 import org.dev.paymentnotificationhubs.domain.event.Event;
-import org.dev.paymentnotificationhubs.domain.event.TransactionProcessedEvent;
+import org.dev.paymentnotificationhubs.domain.event.TransactionReceivedEvent;
 import java.util.List;
 
 @UseCase
-public class TransactionService {
+public class TransactionService implements ITransactionServicePort {
 
     private final ITransactionSendNotificationPort transactionSendNotificationAdapter;
 
@@ -16,9 +17,9 @@ public class TransactionService {
         this.transactionSendNotificationAdapter = transactionSendNotificationAdapter;
     }
 
-    public void transactionProcessedEvent (Event<TransactionProcessedEvent> transactionProcessedEvent) {
+    public void transactionReceivedEvent(Event<TransactionReceivedEvent> transactionReceivedEvent) {
         // send notification hub to email, sms, push notification, etc
-        List<Transaction> transactions = (List<Transaction>)transactionProcessedEvent.getData();
+        List<Transaction> transactions = (List<Transaction>)transactionReceivedEvent.getData();
         transactionSendNotificationAdapter.send(transactions);
     }
 }

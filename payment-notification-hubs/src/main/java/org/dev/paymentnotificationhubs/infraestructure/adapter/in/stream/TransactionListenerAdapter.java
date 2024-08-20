@@ -1,16 +1,16 @@
-package org.dev.paymentnotificationhubs.infraestructure.adapter.in.streaming;
+package org.dev.paymentnotificationhubs.infraestructure.adapter.in.stream;
 
 import org.dev.paymentnotificationhubs.application.port.in.streaming.ITransactionListenerPort;
 import org.dev.paymentnotificationhubs.application.service.TransactionService;
 import org.dev.paymentnotificationhubs.domain.event.Event;
-import org.dev.paymentnotificationhubs.domain.event.TransactionProcessedEvent;
+import org.dev.paymentnotificationhubs.domain.event.TransactionReceivedEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
-public class TransactionListenerAdapter implements ITransactionListenerPort<Event<TransactionProcessedEvent>> {
+public class TransactionListenerAdapter implements ITransactionListenerPort<Event<TransactionReceivedEvent>> {
 
     Logger logger = Logger.getLogger(getClass().getName());
     private final TransactionService transactionService;
@@ -20,9 +20,9 @@ public class TransactionListenerAdapter implements ITransactionListenerPort<Even
     }
 
     @KafkaListener(topics = "${spring.kafka.topic.name}")
-    public void transactionProcessedEvent(Event<TransactionProcessedEvent> transactionProcessedEvent){
+    public void transactionReceivedEvent(Event<TransactionReceivedEvent> transactionReceivedEvent){
 
-        transactionService.transactionProcessedEvent(transactionProcessedEvent);
-        logger.log(Level.INFO, "Transaction processed: {0} - {1}", new Object[]{transactionProcessedEvent.getData(), transactionProcessedEvent.getId()});
+        transactionService.transactionReceivedEvent(transactionReceivedEvent);
+        logger.log(Level.INFO, "Transaction hub sent: {0} - {1}", new Object[]{transactionReceivedEvent.getData(), transactionReceivedEvent.getId()});
     }
 }

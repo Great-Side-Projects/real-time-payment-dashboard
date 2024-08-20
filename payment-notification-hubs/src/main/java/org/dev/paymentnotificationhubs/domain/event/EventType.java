@@ -1,7 +1,7 @@
 package org.dev.paymentnotificationhubs.domain.event;
 
 public enum EventType {
-    PROCESSED,
+    RECEIVED,
     FAILED;
 
     @Override

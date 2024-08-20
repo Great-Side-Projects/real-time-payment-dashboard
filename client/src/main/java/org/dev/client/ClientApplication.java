@@ -17,7 +17,7 @@ public class ClientApplication {
     public static void main(String[] args) throws URISyntaxException {
         SpringApplication.run(ClientApplication.class, args);
 
-        URI uri = new URI("ws://localhost:8080/ws");
+        URI uri = new URI("ws://localhost:8084/ws");
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
