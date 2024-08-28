@@ -17,9 +17,9 @@ public class TransactionService implements ITransactionServicePort {
         this.transactionSendNotificationAdapter = transactionSendNotificationAdapter;
     }
 
-    public void transactionReceivedEvent(Event<TransactionReceivedEvent> transactionReceivedEvent) {
+    public void transactionReceivedEvent(TransactionReceivedEvent transactionReceivedEvent) {
         // send notification hub to email, sms, push notification, etc
-        List<Transaction> transactions = (List<Transaction>)transactionReceivedEvent.getData();
-        transactionSendNotificationAdapter.send(transactions);
+        List<Transaction> transactions = transactionReceivedEvent.getData();
+        transactionSendNotificationAdapter.send(transactions, transactionReceivedEvent.getId());
     }
 }

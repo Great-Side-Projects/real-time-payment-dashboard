@@ -4,5 +4,5 @@ import org.dev.paymentnotificationhubs.domain.Transaction;
 import java.util.List;
 
 public interface ITransactionSendNotificationPort {
-    List<Transaction> send(List<Transaction> transactions);
+    void send(List<Transaction> transactions, String eventId);
 }

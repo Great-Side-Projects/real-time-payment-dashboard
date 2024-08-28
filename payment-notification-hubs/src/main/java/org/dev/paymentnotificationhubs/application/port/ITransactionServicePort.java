@@ -4,5 +4,5 @@ import org.dev.paymentnotificationhubs.domain.event.Event;
 import org.dev.paymentnotificationhubs.domain.event.TransactionReceivedEvent;
 
 public interface ITransactionServicePort {
-    void transactionReceivedEvent(Event<TransactionReceivedEvent> transactionReceivedEvent);
+    void transactionReceivedEvent(TransactionReceivedEvent transactionReceivedEvent);
 }

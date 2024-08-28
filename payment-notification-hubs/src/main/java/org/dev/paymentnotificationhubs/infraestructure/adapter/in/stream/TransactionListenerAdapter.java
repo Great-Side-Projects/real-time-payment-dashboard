@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
-public class TransactionListenerAdapter implements ITransactionListenerPort<Event<TransactionReceivedEvent>> {
+public class TransactionListenerAdapter implements ITransactionListenerPort<TransactionReceivedEvent> {
 
     Logger logger = Logger.getLogger(getClass().getName());
     private final TransactionService transactionService;
@@ -20,9 +20,9 @@ public class TransactionListenerAdapter implements ITransactionListenerPort<Even
     }
 
     @KafkaListener(topics = "${spring.kafka.topic.name}")
-    public void transactionReceivedEvent(Event<TransactionReceivedEvent> transactionReceivedEvent){
+    public void transactionReceivedEvent(TransactionReceivedEvent transactionReceivedEvent){
 
         transactionService.transactionReceivedEvent(transactionReceivedEvent);
-        logger.log(Level.INFO, "Transaction hub sent: {0} - {1}", new Object[]{transactionReceivedEvent.getData(), transactionReceivedEvent.getId()});
+        logger.log(Level.INFO, "Transaction hub sent: EventId {0} - {1}", new Object[]{transactionReceivedEvent.getId(),transactionReceivedEvent.getData()});
     }
 }
