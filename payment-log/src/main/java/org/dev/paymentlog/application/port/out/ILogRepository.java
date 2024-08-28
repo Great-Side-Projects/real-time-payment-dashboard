@@ -1,8 +1,7 @@
 package org.dev.paymentlog.application.port.out;
 
 import org.dev.paymentlog.infraestructure.adapter.out.persistence.LogEntity;
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.repository.CrudRepository;
 
-
-public interface ILogRepository extends CassandraRepository<LogEntity, Long> {
+public interface ILogRepository extends CrudRepository<LogEntity, String> {
 }

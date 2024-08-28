@@ -1,48 +1,52 @@
 package org.dev.paymentlog.infraestructure.adapter.out.persistence;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.BatchStatement;
-import com.datastax.oss.driver.api.core.cql.BatchStatementBuilder;
-import com.datastax.oss.driver.api.core.cql.BatchType;
-import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import org.dev.paymentlog.application.port.out.ILogTemplatePort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Component
 public class LogTemplateAdapter implements ILogTemplatePort {
-    private final CqlSession cqlSession;
-    private final String INSERT_ACTION_LOG = "INSERT INTO log (id, action, details, timestamp) VALUES (?, ?, ?, ?)";
-    private final int batchSize = 10000;
+    private final JdbcTemplate jdbcTemplate;
+    private final String INSERT_ACTION_LOG = "INSERT INTO log (id, action, details, created_at) VALUES (?, ?, ?, ?)";
+    private final int batchSize = 5000;
 
-    public LogTemplateAdapter(CqlSession cqlSession) {
-        this.cqlSession = cqlSession;
+    public LogTemplateAdapter(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     @Transactional
     public void saveAll(List<LogEntity> actionLogs) {
 
-        try {
-            PreparedStatement ps = cqlSession.prepare(INSERT_ACTION_LOG);
-            BatchStatementBuilder batchStatementBuilder = BatchStatement.builder(BatchType.UNLOGGED);
-            for (LogEntity actionLog : actionLogs) {
-                batchStatementBuilder.addStatement(ps.bind(
-                                actionLog.getId(),
-                                actionLog.getAction(),
-                                actionLog.getDetails(),
-                                actionLog.getTimestamp()
-                        )
-                );
-            }
-            cqlSession.execute(batchStatementBuilder.build());
+        try (Connection conn = jdbcTemplate.getDataSource().getConnection()) {
+            conn.setAutoCommit(false);
+            int count = 0;
+            try (PreparedStatement ps = conn.prepareStatement(INSERT_ACTION_LOG)) {
+                for (LogEntity  actionLog : actionLogs) {
+                    ps.setString(1, actionLog.getId());
+                    ps.setString(2, actionLog.getAction());
+                    ps.setString(3, actionLog.getDetails());
+                    ps.setTimestamp(4, Timestamp.valueOf(actionLog.getCreatedAt()));
+                    ps.addBatch();
 
-        } finally {
-            if (cqlSession != null) {
-                //cqlSession.close();
+                    if (++count % batchSize == 0) {
+                        ps.executeBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new RuntimeException("Error saving action logs", e);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving action logs", e);
         }
     }
 }
