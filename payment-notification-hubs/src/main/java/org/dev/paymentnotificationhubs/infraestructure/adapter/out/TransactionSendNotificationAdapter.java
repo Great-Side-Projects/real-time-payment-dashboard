@@ -24,22 +24,17 @@ public class TransactionSendNotificationAdapter implements ITransactionSendNotif
     }
 
     @Override
-    public List<Transaction> send(List<Transaction> transactions) {
+    public void send(List<Transaction> transactions, String eventId) {
 
         List<INotificationStrategy> strategies = List.of(new FailureNotificationStrategy(), new HighAmountNotificationStrategy());
-        List<Transaction> notifiedTransactions = new ArrayList<>();
         transactions.forEach(transaction -> strategies.stream()
                 .filter(strategy -> strategy.applies(transaction))
                 .findFirst()
                 .ifPresent(strategy -> {
-                    String message = strategy.getMessage(transaction);
-
+                    String message =  String.format(strategy.getMessage(transaction), eventId);;
                     notificationQueueProps.getNotificationQueues().stream()
                             .filter(queue -> queue.isEnabled())
                             .forEach(queue -> transactionRabbitMQTemplateAdapter.send(queue.getName(), message));
-
-                    notifiedTransactions.add(transaction);
                 }));
-        return notifiedTransactions;
     }
 }
