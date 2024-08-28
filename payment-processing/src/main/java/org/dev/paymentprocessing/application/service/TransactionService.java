@@ -7,7 +7,6 @@ import org.dev.paymentprocessing.application.port.out.TransactionFilterResponse;
 import org.dev.paymentprocessing.common.UseCase;
 import org.dev.paymentprocessing.domain.TotalTransactionSummary;
 import org.dev.paymentprocessing.domain.Transaction;
-import org.dev.paymentprocessing.domain.event.Event;
 import org.dev.paymentprocessing.domain.event.TransactionReceivedEvent;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +16,9 @@ import java.util.List;
 public class TransactionService implements ITransactionServicePort {
 
     private final ITransactionPersistencePort transactionPersistenceAdapter;
-    private final ITransactionEventStreamingPort<List<Transaction>> transactionEventStreamingAdapter;
 
-    public TransactionService(ITransactionPersistencePort transactionPersistenceAdapter,
-                              ITransactionEventStreamingPort<List<Transaction>> transactionEventStreamingAdapter) {
+    public TransactionService(ITransactionPersistencePort transactionPersistenceAdapter) {
         this.transactionPersistenceAdapter = transactionPersistenceAdapter;
-        this.transactionEventStreamingAdapter = transactionEventStreamingAdapter;
     }
 
     @Override
@@ -42,19 +38,17 @@ public class TransactionService implements ITransactionServicePort {
 
     @Transactional
     @Override
-    public List<Transaction> processTransaction(Event<TransactionReceivedEvent> transactionReceivedEvent) {
+    public TransactionReceivedEvent processTransaction(TransactionReceivedEvent transactionReceivedEvent) {
         if (transactionReceivedEvent == null) {
-            return List.of();
+            return null;
         }
 
-        List<Transaction> transactions = (List<Transaction>) transactionReceivedEvent.getData();
-        //event id
+        List<Transaction> transactions = transactionReceivedEvent.getData();
         long startTime = System.currentTimeMillis();
         transactionPersistenceAdapter.saveAll(transactions, transactionReceivedEvent.getId());
         long endTime = System.currentTimeMillis();
-        //transactionEventStreamingAdapter.sendProcessedEvent(transactions);
         System.out.println("Time elapsed: " + (endTime - startTime) / 60000 + ":" + ((endTime - startTime) / 1000) % 60 + ":" + (endTime - startTime) % 1000);
-        return transactions;
+        return transactionReceivedEvent;
     }
 
     @Override

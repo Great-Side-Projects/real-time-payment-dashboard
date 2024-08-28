@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.dev.paymentprocessing.application.port.out.ILoggingAspectPort;
 import org.dev.paymentprocessing.application.port.out.ITransactionEventTemplatePort;
 import org.dev.paymentprocessing.domain.Transaction;
+import org.dev.paymentprocessing.domain.event.TransactionReceivedEvent;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +34,18 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
         transactionRabbitMQTemplateAdapter.send(new String[]{actionLogMessage});
     }
 
-    @AfterReturning(value = "execution(* org.dev.paymentprocessing.application.service.TransactionService.processTransaction(..)))", returning = "transactions")
+    @AfterReturning(value = "execution(* org.dev.paymentprocessing.application.service.TransactionService.processTransaction(..)))", returning = "transactionReceivedEvent")
     @Override
-    public void logProcessTransaction(List<Transaction> transactions) {
-        if (transactions.isEmpty()) {
+    public void logProcessTransaction(TransactionReceivedEvent transactionReceivedEvent) {
+        if (transactionReceivedEvent == null) {
             return;
         }
 
         List<String> logMessages = new ArrayList<>();
-        transactions.forEach(transaction -> {
+        transactionReceivedEvent.getData().forEach(transaction -> {
             String action = "Process Transaction";
-            String details = String.format("Processed transaction - Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
-                    transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
+            String details = String.format("Processed transaction - EventId: %s, Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
+                    transactionReceivedEvent.getId() ,transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             logMessages.add(actionLogMessage);
             if (logMessages.size() == CHUNK_MESSAGE_SIZE) {

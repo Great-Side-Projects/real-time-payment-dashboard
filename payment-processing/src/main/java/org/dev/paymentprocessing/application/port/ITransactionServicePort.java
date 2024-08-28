@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ITransactionServicePort {
     TransactionFilterResponse filterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size);
-    List<Transaction> processTransaction(Event<TransactionReceivedEvent> transactionReceivedEvent);
+    TransactionReceivedEvent processTransaction(TransactionReceivedEvent transactionReceivedEvent);
     TotalTransactionSummary totalTransactionSummary();
     TotalTransactionSummary getTransactionSummaryByStatus(String status);
     TotalTransactionSummary getTransactionSummaryByUserId(String userId);

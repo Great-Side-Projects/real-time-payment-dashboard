@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class TransactionTemplateAdapter implements ITransactionTemplatePort {
     private final CqlSession cqlSession;
-    private final String INSERT_TRANSACTION = "INSERT INTO transaction (eventid, id, userid, amount, status, time, location) VALUES (? ,?, ?, ?, ?, ?, ?)";
+    private final String INSERT_TRANSACTION = "INSERT INTO transaction (eventid, id, userid, amount, status, time, location, createdat) VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
     private final String SELECT_TRANSACTION_SUMMARY = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction";
     private final String SELECT_TRANSACTION_SUMMARY_BY_STATUS = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction WHERE status = ?";
     private final String SELECT_TRANSACTION_SUMMARY_BY_USERID = "SELECT COUNT(id) AS totalCount, SUM(amount) AS totalValue FROM transaction WHERE userid = ?";
@@ -48,7 +48,8 @@ public class TransactionTemplateAdapter implements ITransactionTemplatePort {
                                 transactionEntity.getAmount(),
                                 transactionEntity.getStatus(),
                                 transactionEntity.getTime(),
-                                transactionEntity.getLocation()
+                                transactionEntity.getLocation(),
+                                transactionEntity.getCreatedAt()
                         )
                 );
                 if (transactions.indexOf(transactionEntity) > 0)
