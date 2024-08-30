@@ -1,4 +1,4 @@
-curl -X POST http://localhost:18083/connectors -H 'Content-Type: application/json' -d \
+curl -X POST http://localhost:28083/connectors -H 'Content-Type: application/json' -d \
 '{
   "name": "transactions-analytics-connector",
   "config": {
