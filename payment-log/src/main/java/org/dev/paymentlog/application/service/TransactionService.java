@@ -5,6 +5,8 @@ import org.dev.paymentlog.application.port.out.ILogPersistencePort;
 import org.dev.paymentlog.common.UseCase;
 import org.dev.paymentlog.domain.Log;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,6 @@ public class TransactionService implements ITransactionServicePort {
             logs.add(actionLog);
         }
         logPersistenceAdapter.saveAll(logs);
-        System.out.println(" [x] Received '" + logs.size() + " action logs");
+        System.out.println(" [x] Received '" + logs.size() + " action logs " +  LocalDateTime.now());
         }
 }

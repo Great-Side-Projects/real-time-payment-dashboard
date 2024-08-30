@@ -6,6 +6,8 @@ curl -X POST http://localhost:18083/connectors -H 'Content-Type: application/jso
     "tasks.max": "3",
     "topics": "TRANSACTIONS_PER_USER,TRANSACTIONS_PER_MINUTE,TRANSACTION_SUMMARY",
     "connection.url": "http://172.17.0.1:9200",
+    "connection.username": "elastic",
+    "connection.password": "********",
     "type.name": "_doc",
     "key.ignore": "false",
     "schema.ignore": "true",
@@ -24,3 +26,5 @@ curl -X POST http://localhost:18083/connectors -H 'Content-Type: application/jso
     "max.buffered.records": "20000"
   }
 }'
+# token to ELASTICSEARCH_SERVICEACCOUNTTOKEN
+curl -X POST -u elastic:password "localhost:9200/_security/service/elastic/kibana/credential/token/token1?pretty"
