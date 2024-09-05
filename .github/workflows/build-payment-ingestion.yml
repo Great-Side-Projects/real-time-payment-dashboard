@@ -51,5 +51,5 @@ jobs:
         with:
           appSourcePath: ${{ github.workspace }}/payment-ingestion/src
           acrName: paymentingestion
-          containerAppName: paymentingestion
+          containerAppName: payment-ingestion
           resourceGroup: sideprojects
