@@ -35,4 +35,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_INGESTION }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B -f payment-ingestion/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-ingestion -Dsonar.projectName='payment-ingestion'
+  deploy:
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+
+      - name: Build and deploy Container App
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}/src
+          acrName: paymentingestion
+          containerAppName: paymentingestion
+          resourceGroup: sideprojects
