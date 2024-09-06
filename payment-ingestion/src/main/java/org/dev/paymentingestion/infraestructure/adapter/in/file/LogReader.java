@@ -21,7 +21,8 @@ public class LogReader
         this.logReaderService = logReaderService;
     }
 
-    @Scheduled(fixedRate = 2500) // Cada 1 segundos
+    //@Scheduled(fixedRate = 2500) // Cada 1 segundos
+    // disabled for web controller
     public void readTransactionLogFile() throws IOException {
 
         long startTime = System.currentTimeMillis();

@@ -11,7 +11,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
+// disabled for web controller
 public class FileReaderAdapter implements IFileReaderPort {
 
     private static final String LOG_FILE_PATH = "log-generator/logs/transactions.log";

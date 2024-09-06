@@ -6,6 +6,7 @@ import org.dev.paymentingestion.application.port.out.ITransactionFormatProviderP
 import org.dev.paymentingestion.common.UseCase;
 import org.dev.paymentingestion.domain.Transaction;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -15,19 +16,21 @@ public class LogReaderService implements ILogReaderServicePort {
 
     private final ITransactionFormatProviderPort transactionFormatProviderAdapter;
 
-    private final IFileReaderPort fileReaderAdapter;
+    //***disabled for web controller****
+    //private final IFileReaderPort fileReaderAdapter;
 
-    public LogReaderService(ITransactionFormatProviderPort transactionFormatProviderAdapter,
-                            IFileReaderPort fileReaderAdapter) {
+    public LogReaderService(ITransactionFormatProviderPort transactionFormatProviderAdapter
+    //                        IFileReaderPort fileReaderAdapter
+    ) {
 
         this.transactionFormatProviderAdapter = transactionFormatProviderAdapter;
-        this.fileReaderAdapter = fileReaderAdapter;
+    //    this.fileReaderAdapter = fileReaderAdapter;
     }
 
     @Override
     public List<Transaction> readTransactionLogFile() throws IOException {
 
-        List<String> lines = fileReaderAdapter.readLines();
+        List<String> lines = new ArrayList<>();//fileReaderAdapter.readLines();
 
         if (lines.isEmpty()) {
             return List.of();
@@ -48,7 +51,7 @@ public class LogReaderService implements ILogReaderServicePort {
 
     @Override
     public void saveLastKnownPosition() throws IOException {
-        fileReaderAdapter.saveLastKnownPosition();
+        //fileReaderAdapter.saveLastKnownPosition();
     }
 }
 
