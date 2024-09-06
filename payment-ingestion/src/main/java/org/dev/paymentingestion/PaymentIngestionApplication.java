@@ -12,5 +12,4 @@ public class PaymentIngestionApplication {
 		SpringApplication.run(PaymentIngestionApplication.class, args);
 		System.out.println("Payment Ingestion Application started...");
 	}
-
 }
