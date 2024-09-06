@@ -53,7 +53,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package -DskipTests
+        run: mvn payment-ingestion/pom.xml --batch-mode --update-snapshots package -DskipTests
 
       - name: Log in to Azure
         uses: azure/login@v1
