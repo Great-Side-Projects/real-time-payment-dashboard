@@ -78,7 +78,7 @@ jobs:
       - name: Build and push container image to registry
         uses: docker/build-push-action@v5
         with:
-          #context: .
+          context: .
           file: ./payment-ingestion/Dockerfile_ingestion
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_CONTAINER_REGISTRY }}:${{ github.sha }}
