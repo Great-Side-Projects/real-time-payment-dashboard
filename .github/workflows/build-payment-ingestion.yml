@@ -79,7 +79,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./payment-ingestion
-          file: ./payment-ingestion/Dockerfile_ingestion
+          file: ./Dockerfile_ingestion
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_CONTAINER_REGISTRY }}:${{ github.sha }}
           build-args: |
