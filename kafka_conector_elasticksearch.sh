@@ -26,5 +26,3 @@ curl -X POST http://localhost:28083/connectors -H 'Content-Type: application/jso
     "max.buffered.records": "20000"
   }
 }'
-# token to ELASTICSEARCH_SERVICEACCOUNTTOKEN
-curl -X POST -u elastic:password "localhost:9200/_security/service/elastic/kibana/credential/token/token1?pretty"
