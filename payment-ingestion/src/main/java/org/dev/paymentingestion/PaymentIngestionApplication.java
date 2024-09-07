@@ -10,6 +10,6 @@ public class PaymentIngestionApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PaymentIngestionApplication.class, args);
-		System.out.println("Payment Ingestion Application started...");
+		System.out.println("Payment Ingestion Application started...-");
 	}
 }
