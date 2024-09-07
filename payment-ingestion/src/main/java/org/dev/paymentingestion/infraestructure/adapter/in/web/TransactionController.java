@@ -22,6 +22,14 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+    @Operation(summary = "Health check", description = "Check if the service is running", tags = "Transactions")
+    @ApiResponse(responseCode = "200", description = "Service running")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
+
     @Operation(summary = "Process transactions",
             description = "Process a list of transactions", tags = "Transactions")
     @ApiResponse(responseCode = "200", description = "Transactions processed")
