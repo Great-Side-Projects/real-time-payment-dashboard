@@ -1,10 +1,11 @@
-name: Build
+name: Payment Notification Hubs
 
 on:
   push:
     paths:
       - 'payment-notification-hubs/**'
-
+  # Allow manual trigger
+  workflow_dispatch:
 jobs:
   build:
     name: Build and analyze

@@ -1,10 +1,11 @@
-name: Build
+name: Payment Log
 
 on:
   push:
     paths:
       - 'payment-log/**'
-
+  # Allow manual trigger
+  workflow_dispatch:
 jobs:
   build:
     name: Build and analyze
