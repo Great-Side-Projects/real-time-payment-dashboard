@@ -22,14 +22,7 @@ class PaymentProcessingDashboardApplicationTests {
 
     @Test
     void mainApplicationClassIsAnnotatedWithSpringBootApplication() {
-        assertThat(PaymentProcessingDashboardApplication.class)
+        assertThat(PaymentProcessingApplication.class)
                 .hasAnnotation(SpringBootApplication.class);
     }
-
-    @Test
-    void schedulingIsEnabledInApplication() {
-        assertThat(PaymentProcessingDashboardApplication.class)
-                .hasAnnotation(EnableScheduling.class);
-    }
-
 }

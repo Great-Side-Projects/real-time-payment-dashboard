@@ -15,6 +15,8 @@ import org.springframework.data.domain.Slice;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -48,9 +50,10 @@ class TransactionPersistenceAdapterTests {
                 "2024-07-22T23:17:20.694Z",
                 "CN"
         );
-        when(transactionRepository.save(any())).thenReturn(TransactionMapper.toTransactionEntity(transaction));
+        String  eventId = UUID.randomUUID().toString();
+        when(transactionRepository.save(any())).thenReturn(TransactionMapper.toTransactionEntity(transaction, eventId));
 
-        Transaction result = transactionPersistenceAdapter.save(transaction);
+        Transaction result = transactionPersistenceAdapter.save(transaction, eventId);
         assertNotNull(result);
     }
 
@@ -67,7 +70,7 @@ class TransactionPersistenceAdapterTests {
         ));
         doNothing().when(transactionTemplateAdapter).saveAll(anyList());
 
-        transactionPersistenceAdapter.saveAll(transactions, );
+        transactionPersistenceAdapter.saveAll(transactions, UUID.randomUUID().toString());
         verify(transactionTemplateAdapter, times(1)).saveAll(anyList());
     }
 
@@ -84,7 +87,7 @@ class TransactionPersistenceAdapterTests {
         ));
         doThrow(new RuntimeException("Error")).when(transactionTemplateAdapter).saveAll(anyList());
 
-        assertThrows(RuntimeException.class, () -> transactionPersistenceAdapter.saveAll(transactions, ));
+        assertThrows(RuntimeException.class, () -> transactionPersistenceAdapter.saveAll(transactions, UUID.randomUUID().toString() ));
     }
 
     @Test
