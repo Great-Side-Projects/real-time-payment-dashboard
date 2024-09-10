@@ -41,12 +41,13 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B -f payment-processing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-processing-dashboard -Dsonar.projectName='payment-processing-dashboard'
+
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write #This is required for requesting the OIDC JWT Token
-      contents: read #Required when GH token is used to authenticate with private repo
+    #permissions:
+      #id-token: write #This is required for requesting the OIDC JWT Token
+      #contents: read #Required when GH token is used to authenticate with private repo
 
     steps:
       - name: Checkout to the branch
@@ -60,7 +61,7 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
-          appSourcePath: ${{ github.workspace }}payment-ingestion/src
+          appSourcePath: ${{ github.workspace }}payment-processing/src
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
           dockerfilePath: payment-processing/Dockerfile_processing
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
