@@ -58,6 +58,17 @@ jobs:
         with:
           creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
 
+      - name: Set up JDK 22
+        uses: actions/setup-java@v3
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -f payment-ingestion/pom.xml --batch-mode --update-snapshots package -DskipTests
+        #working-directory: ./payment-processing
+
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
