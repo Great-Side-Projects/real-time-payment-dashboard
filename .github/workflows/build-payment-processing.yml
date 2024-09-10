@@ -61,9 +61,9 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
-          appSourcePath: ${{ github.workspace }}payment-processing/src
+          appSourcePath: ${{ github.workspace }}payment-processing
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
-          dockerfilePath: payment-processing/Dockerfile_processing
+          dockerfilePath: Dockerfile_processing
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
