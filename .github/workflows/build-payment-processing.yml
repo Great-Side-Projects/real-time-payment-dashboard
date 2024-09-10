@@ -67,7 +67,7 @@ jobs:
 
       - name: Build with Maven
         run: mvn -f payment-ingestion/pom.xml --batch-mode --update-snapshots package -DskipTests
-        #working-directory: ./payment-processing
+        working-directory: ./payment-processing
 
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
