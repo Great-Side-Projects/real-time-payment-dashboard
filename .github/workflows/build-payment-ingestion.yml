@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - 'payment-ingestion/**'
-
+  # Allow manual trigger
+  workflow_dispatch:
 env:
   AZURE_CONTAINER_REGISTRY: paymentingestion
   CONTAINER_APP_NAME: payment-ingestion
