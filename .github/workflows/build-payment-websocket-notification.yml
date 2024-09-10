@@ -1,10 +1,11 @@
-name: Build
+name: Payment Websocket Notification
 
 on:
   push:
     paths:
       - 'payment-websocket-notification/**'
-
+  # Allow manual trigger
+  workflow_dispatch:
 jobs:
   build:
     name: Build and analyze
