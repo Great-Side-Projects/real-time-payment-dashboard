@@ -57,9 +57,9 @@ jobs:
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
-    #permissions:
-      #id-token: write #This is required for requesting the OIDC JWT Token
-      #contents: read #Required when GH token is used to authenticate with private repo
+    permissions:
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
 
     steps:
       - name: Checkout to the branch
