@@ -94,7 +94,7 @@ jobs:
           acrUsername: ${{ secrets.PAYMENTPROCESSING_REGISTRY_USERNAME }}
           imageToBuild: ${{ env.IMAGENAME }}
           imageToDeploy: ${{ env.IMAGENAME }}
-          #resourceGroup: ${{ env.RESOURCE_GROUP }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
             "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}"
             "KAFKA_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';"
