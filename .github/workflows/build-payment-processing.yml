@@ -54,7 +54,7 @@ jobs:
           SPRING_RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
           SPRING_RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
           SPRING_RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-        run: mvn -B -f payment-processing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-processing-dashboard -Dsonar.projectName='payment-processing-dashboard'
+        run: mvn -B -f ${{env.WORKING_DIRECTORY}}/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-processing-dashboard -Dsonar.projectName='payment-processing-dashboard'
 
   build-and-deploy:
     name: Build and deploy

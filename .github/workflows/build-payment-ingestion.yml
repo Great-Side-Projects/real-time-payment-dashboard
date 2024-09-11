@@ -10,6 +10,8 @@ env:
   AZURE_CONTAINER_REGISTRY: paymentingestion
   CONTAINER_APP_NAME: payment-ingestion
   RESOURCE_GROUP: sideprojects  # Reemplace con su nombre de grupo de recursos
+  WORKING_DIRECTORY: payment-ingestion
+  DOCKERFILE: Dockerfile_ingestion
 
 jobs:
   build:
@@ -40,7 +42,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_INGESTION }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B -f payment-ingestion/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-ingestion -Dsonar.projectName='payment-ingestion'
+        run: mvn -B -f ${{env.WORKING_DIRECTORY}}/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-ingestion -Dsonar.projectName='payment-ingestion'
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -54,7 +56,8 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -f payment-ingestion/pom.xml --batch-mode --update-snapshots package -DskipTests
+        run: mvn --batch-mode --update-snapshots package -DskipTests
+        working-directory: ./${{ env.WORKING_DIRECTORY }}
 
       - name: Log in to Azure
         uses: azure/login@v1
@@ -68,19 +71,11 @@ jobs:
           username: ${{ secrets.PAYMENTINGESTION_REGISTRY_USERNAME }}
           password: ${{ secrets.PAYMENTINGESTION_REGISTRY_PASSWORD }}
 
-      #- name: Build and push Docker image
-      #  env:
-      #    IMAGE_TAG: ${{ github.sha }}
-      #  run: |
-      #    docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:$IMAGE_TAG .
-      #    docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:$IMAGE_TAG
-
-
       - name: Build and push container image to registry
         uses: docker/build-push-action@v5
         with:
-          context: ./payment-ingestion
-          file: ./payment-ingestion/Dockerfile_ingestion
+          context: ./${{env.WORKING_DIRECTORY}}
+          file: ./${{env.WORKING_DIRECTORY}}/${{env.DOCKERFILE}}
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_CONTAINER_REGISTRY }}:${{ github.sha }}
           build-args: |
@@ -93,22 +88,3 @@ jobs:
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_CONTAINER_REGISTRY }}:${{ github.sha }}
-
-# runs-on: ubuntu-latest
-
-
-#    steps:
-#      - uses: actions/checkout@v3#
-
-#      - name: Log in to Azure
-#        uses: azure/login@v1
-#        with:
-#          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
-
-#      - name: Build and deploy Container App
-#        uses: azure/container-apps-deploy-action@v1
-#        with:
-#          appSourcePath: ${{ github.workspace }}/payment-ingestion/src
-#          acrName: paymentingestion
-#          containerAppName: payment-ingestion
-#          resourceGroup: sideprojects

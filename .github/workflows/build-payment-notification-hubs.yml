@@ -42,7 +42,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_NOTIFICATION_HUBS }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B -f payment-notification-hubs/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-notification-hubs -Dsonar.projectName='payment-notification-hubs'
+        run: mvn -B -f ${{env.WORKING_DIRECTORY}}/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-notification-hubs -Dsonar.projectName='payment-notification-hubs'
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
