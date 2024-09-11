@@ -57,9 +57,9 @@ jobs:
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
-    #permissions:
-    #  id-token: write #This is required for requesting the OIDC JWT Token
-    #  contents: read #Required when GH token is used to authenticate with private repo
+    permissions:
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
 
     steps:
       - name: Checkout to the branch
@@ -90,8 +90,8 @@ jobs:
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
           dockerfilePath: Dockerfile_processing
           #containerAppName: ${{ env.CONTAINER_APP_NAME }}
-          acrPassword: ${{ secrets.PAYMENTPROCESSING_REGISTRY_PASSWORD }}
-          acrUsername: ${{ secrets.PAYMENTPROCESSING_REGISTRY_USERNAME }}
+          #acrPassword: ${{ secrets.PAYMENTPROCESSING_REGISTRY_PASSWORD }}
+          #acrUsername: ${{ secrets.PAYMENTPROCESSING_REGISTRY_USERNAME }}
           imageToBuild: ${{ env.IMAGENAME }}
           imageToDeploy: ${{ env.IMAGENAME }}
           #resourceGroup: ${{ env.RESOURCE_GROUP }}
