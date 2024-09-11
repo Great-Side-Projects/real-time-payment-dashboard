@@ -84,7 +84,7 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         env:
-            imageName: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+            IMAGENAME: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
         with:
           appSourcePath: ${{ github.workspace }}/payment-processing
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
@@ -92,9 +92,9 @@ jobs:
           #containerAppName: ${{ env.CONTAINER_APP_NAME }}
           #acrPassword: ${{ secrets.PAYMENTPROCESSING_REGISTRY_PASSWORD }}
           #acrUsername: ${{ secrets.PAYMENTPROCESSING_REGISTRY_USERNAME }}
-          imageToBuild: imageName
-          imageToDeploy: imageName
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          imageToBuild: ${{ env.IMAGENAME }}
+          imageToDeploy: ${{ env.IMAGENAME }}
+          #resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
             "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}"
             "KAFKA_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';"
