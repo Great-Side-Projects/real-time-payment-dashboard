@@ -6,6 +6,11 @@ on:
       - 'payment-notification-hubs/**'
   # Allow manual trigger
   workflow_dispatch:
+env:
+  AZURE_CONTAINER_REGISTRY: paymentnotificationhubs
+  CONTAINER_APP_NAME: payment-notification-hubs
+  RESOURCE_GROUP: sideprojects
+
 jobs:
   build:
     name: Build and analyze
@@ -36,3 +41,50 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_NOTIFICATION_HUBS }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B -f payment-notification-hubs/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-notification-hubs -Dsonar.projectName='payment-notification-hubs'
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+
+      - name: Set up JDK 22
+        uses: actions/setup-java@v3
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package -DskipTests
+        working-directory: ./payment-notification-hubs
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        env:
+          IMAGENAME: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+        with:
+          appSourcePath: ${{ github.workspace }}/payment-processing
+          acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          dockerfilePath: Dockerfile_notification_hubs
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
+          imageToBuild: ${{ env.IMAGENAME }}
+          imageToDeploy: ${{ env.IMAGENAME }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          buildArguments: |
+            "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}"
+            "KAFKA_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';"
+            "RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}"
+            "RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}"
+            "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
+            "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
+
+
+
+
