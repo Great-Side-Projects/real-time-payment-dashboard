@@ -42,7 +42,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
           SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';"
-          SPRING_CASSANDRA_CONTACT_POINTS=: ${{ secrets.CASSANDRA_CONTACT_POINTS }}
+          SPRING_CASSANDRA_CONTACT_POINTS: ${{ secrets.CASSANDRA_CONTACT_POINTS }}
           SPRING_CASSANDRA_PORT: ${{ secrets.CASSANDRA_PORT }}
           SPRING_CASSANDRA_KEYSPACE_NAME: ${{ secrets.CASSANDRA_KEYSPACE_NAME }}
           SPRING_CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
