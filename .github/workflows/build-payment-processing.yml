@@ -88,8 +88,8 @@ jobs:
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
           dockerfilePath: Dockerfile_processing
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
-          acrPassword: ${{ secrets.SIDEPROJECTS_ACR_PASSWORD }}
-          acrUsername: ${{ secrets.SIDEPROJECTS_ACR_USERNAME }}
+          acrPassword: ${{ secrets.PAYMENTPROCESSING_REGISTRY_PASSWORD }}
+          acrUsername: ${{ secrets.PAYMENTPROCESSING_REGISTRY_USERNAME }}
           imageToBuild: ${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
