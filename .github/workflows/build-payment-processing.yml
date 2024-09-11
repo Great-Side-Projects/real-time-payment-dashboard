@@ -88,7 +88,7 @@ jobs:
           acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
           dockerfilePath: Dockerfile_processing
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
-          imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
+          imageToBuild: ${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
             "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}"
