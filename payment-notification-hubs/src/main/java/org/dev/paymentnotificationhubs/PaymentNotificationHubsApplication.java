@@ -9,5 +9,6 @@ public class PaymentNotificationHubsApplication {
     public static void main(String[] args) {
         SpringApplication.run(PaymentNotificationHubsApplication.class, args);
         System.out.println("payment-notification-hubs started...");
+
     }
 }
