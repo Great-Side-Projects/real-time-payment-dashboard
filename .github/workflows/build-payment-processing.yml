@@ -12,47 +12,47 @@ env:
   RESOURCE_GROUP: sideprojects
 
 jobs:
-  #build-and-analyze:
-  #  name: Build and analyze
-  #  runs-on: ubuntu-latest
+  build-and-analyze:
+    name: Build and analyze
+    runs-on: ubuntu-latest
     
-  #  steps:
-  #    - uses: actions/checkout@v4
-  #      with:
-  #        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-  #    - name: Set up JDK 22
-  #      uses: actions/setup-java@v1
-  #      with:
-  #        java-version: 22
-  #    - name: Cache SonarQube packages
-  #      uses: actions/cache@v1
-  #      with:
-  #        path: ~/.sonar/cache
-  #        key: ${{ runner.os }}-sonar
-  #        restore-keys: ${{ runner.os }}-sonar
-  #    - name: Cache Maven packages
-  #      uses: actions/cache@v1
-  #      with:
-  #        path: ~/.m2
-  #        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-  #        restore-keys: ${{ runner.os }}-m2
-  #    - name: Build and analyze
-  #      env:
-  #        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #        SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
-  #        SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';
-  #        SPRING_CASSANDRA_CONTACT_POINTS: ${{ secrets.CASSANDRA_CONTACT_POINTS }}
-  #        SPRING_CASSANDRA_PORT: ${{ secrets.CASSANDRA_PORT }}
-  #        SPRING_CASSANDRA_KEYSPACE_NAME: ${{ secrets.CASSANDRA_KEYSPACE_NAME }}
-  #        SPRING_CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
-  #        SPRING_CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
-  #        SPRING_CASSANDRA_LOCAL_DATACENTER: ${{ secrets.CASSANDRA_LOCAL_DATACENTER }}
-  #        SPRING_RABBITMQ_HOST: ${{ secrets.RABBITMQ_HOST }}
-  #        SPRING_RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
-  #        SPRING_RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
-  #        SPRING_RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-  #      run: mvn -B -f payment-processing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-processing-dashboard -Dsonar.projectName='payment-processing-dashboard'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 22
+        uses: actions/setup-java@v1
+        with:
+          java-version: 22
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
+          SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username='${{ secrets.KAFKA_USERNAME }}' password='${{ secrets.KAFKA_PASSWORD }}';
+          SPRING_CASSANDRA_CONTACT_POINTS: ${{ secrets.CASSANDRA_CONTACT_POINTS }}
+          SPRING_CASSANDRA_PORT: ${{ secrets.CASSANDRA_PORT }}
+          SPRING_CASSANDRA_KEYSPACE_NAME: ${{ secrets.CASSANDRA_KEYSPACE_NAME }}
+          SPRING_CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
+          SPRING_CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
+          SPRING_CASSANDRA_LOCAL_DATACENTER: ${{ secrets.CASSANDRA_LOCAL_DATACENTER }}
+          SPRING_RABBITMQ_HOST: ${{ secrets.RABBITMQ_HOST }}
+          SPRING_RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+          SPRING_RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+          SPRING_RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+        run: mvn -B -f payment-processing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-processing-dashboard -Dsonar.projectName='payment-processing-dashboard'
 
   build-and-deploy:
     name: Build and deploy
