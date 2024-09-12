@@ -106,10 +106,10 @@ jobs:
             "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
             "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
           environmentVariables: |
-            "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}"
-            "KAFKA_USERNAME=${{ secrets.KAFKA_USERNAME }}"
-            "KAFKA_PASSWORD=${{ secrets.KAFKA_PASSWORD }}"
-            "KAFKA_CONSUMER_GROUP_ID=${{ secrets.CONTAINER_APP_NAME }}"
+            'KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}'
+            'KAFKA_USERNAME=${{ secrets.KAFKA_USERNAME }}'
+            'KAFKA_PASSWORD=${{ secrets.KAFKA_PASSWORD }}'
+            'KAFKA_CONSUMER_GROUP_ID=${{ secrets.CONTAINER_APP_NAME }}'
             
 
 
