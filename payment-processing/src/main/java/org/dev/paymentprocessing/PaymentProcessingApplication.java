@@ -10,6 +10,5 @@ public class PaymentProcessingApplication {
     public static void main(String[] args) {
         SpringApplication.run(PaymentProcessingApplication.class, args);
         System.out.println("Payment Processing is running...");
-
     }
 }
