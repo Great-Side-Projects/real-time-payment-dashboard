@@ -42,7 +42,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_LOG }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SPRING_DATASOURCE_URL: jdbc:mysql://${{ secrets.DATASOURCE_URL }}
+          SPRING_DATASOURCE_URL: "jdbc:mysql://${{ secrets.DATASOURCE_URL }}"
           SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
           SPRING_RABBITMQ_HOST: ${{ secrets.SPRING_RABBITMQ_HOST }}
@@ -88,7 +88,7 @@ jobs:
           imageToDeploy: ${{ env.IMAGENAME }}
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           buildArguments: |
-            "DATASOURCE_URL=jdbc:mysql://${{ secrets.DATASOURCE_URL }}"
+            "DATASOURCE_URL='jdbc:mysql://${{ secrets.DATASOURCE_URL }}'"
             "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}"
             "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}"
             "RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}"
