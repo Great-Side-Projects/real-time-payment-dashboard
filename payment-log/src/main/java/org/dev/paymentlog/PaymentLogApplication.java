@@ -9,6 +9,5 @@ public class PaymentLogApplication {
     public static void main(String[] args) {
         SpringApplication.run(PaymentLogApplication.class, args);
         System.out.println("payment-log started...");
-
     }
 }
