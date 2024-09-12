@@ -6,6 +6,13 @@ on:
       - 'payment-log/**'
   # Allow manual trigger
   workflow_dispatch:
+env:
+  AZURE_CONTAINER_REGISTRY: paymentlog
+  CONTAINER_APP_NAME: payment-log
+  RESOURCE_GROUP: sideprojects
+  WORKING_DIRECTORY: payment-log
+  DOCKERFILE: Dockerfile_log
+
 jobs:
   build:
     name: Build and analyze
@@ -35,4 +42,56 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_LOG }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B -f payment-log/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-log -Dsonar.projectName='payment-log'
+          SPRING_DATASOURCE_URL: jdbc:mysql://${{ secrets.DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+          SPRING_RABBITMQ_HOST: ${{ secrets.SPRING_RABBITMQ_HOST }}
+          SPRING_RABBITMQ_PORT: ${{ secrets.SPRING_RABBITMQ_PORT }}
+          SPRING_RABBITMQ_USERNAME: ${{ secrets.SPRING_RABBITMQ_USERNAME }}
+          SPRING_RABBITMQ_PASSWORD: ${{ secrets.SPRING_RABBITMQ_PASSWORD }}
+
+        run: mvn -B -f ${{env.WORKING_DIRECTORY}}/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-log -Dsonar.projectName='payment-log'
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+
+      - name: Set up JDK 22
+        uses: actions/setup-java@v3
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package -DskipTests
+        working-directory: ./${{ env.WORKING_DIRECTORY }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        env:
+          IMAGENAME: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+        with:
+          appSourcePath: ${{ github.workspace }}/${{ env.WORKING_DIRECTORY }}
+          acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          dockerfilePath: ${{ env.DOCKERFILE }}
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
+          imageToBuild: ${{ env.IMAGENAME }}
+          imageToDeploy: ${{ env.IMAGENAME }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          buildArguments: |
+            "DATASOURCE_URL=jdbc:mysql://${{ secrets.DATASOURCE_URL }}"
+            "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}"
+            "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}"
+            "RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}"
+            "RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}"
+            "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
+            "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"      
