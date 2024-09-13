@@ -3,6 +3,7 @@ package org.dev.paymentlog.infraestructure.adapter.in;
 import org.dev.paymentlog.application.port.ITransactionServicePort;
 import org.dev.paymentlog.application.port.in.ILoggingEventPort;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,9 +14,9 @@ public class LoggingAdapter implements ILoggingEventPort {
         this.transactionService = transactionService;
     }
 
-    @RabbitListener(queues = "${spring.rabbitmq.queue.name}")
+    //@RabbitListener(queues = "${spring.rabbitmq.queue.name}")
     @Override
-    public void LogEvent(String[] data) {
+    public void LogEvent(@Payload String[] data) {
         transactionService.LogEvent(data);
     }
 }
