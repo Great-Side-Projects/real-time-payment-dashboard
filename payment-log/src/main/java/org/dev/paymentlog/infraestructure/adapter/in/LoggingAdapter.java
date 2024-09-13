@@ -14,7 +14,7 @@ public class LoggingAdapter implements ILoggingEventPort {
         this.transactionService = transactionService;
     }
 
-    //@RabbitListener(queues = "${spring.rabbitmq.queue.name}")
+    @RabbitListener(queues = "${spring.rabbitmq.queue.name}")
     @Override
     public void LogEvent(@Payload String[] data) {
         transactionService.LogEvent(data);
