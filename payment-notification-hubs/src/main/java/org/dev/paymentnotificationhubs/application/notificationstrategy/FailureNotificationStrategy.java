@@ -13,6 +13,6 @@ public class FailureNotificationStrategy implements INotificationStrategy {
 
     @Override
     public String getMessage(Transaction transaction) {
-        return "FailureNotification: EventId: %s " + transaction.toString();
+        return "Failure notification: EventId: %s " + transaction.toString();
     }
 }

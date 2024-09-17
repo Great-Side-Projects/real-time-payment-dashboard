@@ -14,6 +14,6 @@ public class HighAmountNotificationStrategy implements INotificationStrategy {
 
     @Override
     public String getMessage(Transaction transaction) {
-       return "HighAmountNotification: EventId: %s " + transaction.toString();
+       return "HighAmount notification: EventId: %s " + transaction.toString();
     }
 }
