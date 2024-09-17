@@ -27,7 +27,7 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
     @Override
     public void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size) {
         String action = "Filter Transactions";
-        String details = String.format("Filter applied - Status: %s, UserId: %s, MinAmount: %s, MaxAmount: %s, TransactionId: %s, Page: %d, Size: %d",
+        String details = String.format("Filter applied: {Status: %s, UserId: %s, MinAmount: %s, MaxAmount: %s, TransactionId: %s, Page: %s, Size: %d}",
                 status, userId, minAmount, maxAmount, transactionId, nextPagingState, size);
         String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
 
@@ -44,8 +44,8 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
         List<String> logMessages = new ArrayList<>();
         transactionReceivedEvent.getData().forEach(transaction -> {
             String action = "Process Transaction";
-            String details = String.format("Processed transaction - EventId: %s, Id: %s, UserId: %s, Amount: %s, Status: %s, Time: %s, Location: %s",
-                    transactionReceivedEvent.getId() ,transaction.getId(), transaction.getUserId(), transaction.getAmount(), transaction.getStatus(), transaction.getTime(), transaction.getLocation());
+            String details = String.format("Processed transaction: EventId: %s %s ", transactionReceivedEvent.getId(), transaction.toString());
+
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             logMessages.add(actionLogMessage);
             if (logMessages.size() == CHUNK_MESSAGE_SIZE) {
