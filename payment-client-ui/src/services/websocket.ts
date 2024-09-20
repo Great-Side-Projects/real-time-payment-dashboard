@@ -18,13 +18,14 @@ export const initializeWebSocket = (callback: WebSocketCallback): (() => void) =
     //console.log('Connected: ' + frame);
     client.subscribe('/transaction/notifications', function (message) {
       const data = JSON.parse(message.body);
-      console.log('Received json: ' + data);
+      //console.log('Received json: ' + data);
       
-      const notificationType = data.Notificationtype;
+      const notificationType = data.notificationtype;
       const notification: Notification = {
         type: notificationType,
         Transaction: data.transaction
       };
+      //console.log('Received notification: ' + notification);
       callback(notification);
     } as messageCallbackType);
   };
