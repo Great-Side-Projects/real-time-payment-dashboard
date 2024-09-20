@@ -7,6 +7,7 @@ import org.dev.paymentnotificationhubs.domain.Transaction;
 public class HighAmountNotificationStrategy implements INotificationStrategy {
 
     private final int AMOUNT_1000 = 1000;
+
     @Override
     public boolean applies(Transaction transaction) {
         return transaction.getAmount() > AMOUNT_1000;
@@ -14,6 +15,12 @@ public class HighAmountNotificationStrategy implements INotificationStrategy {
 
     @Override
     public String getMessage(Transaction transaction) {
-       return "HighAmount notification: EventId: %s " + transaction.toString();
+        return """
+                {
+                 "Notificationtype": "highamountnotification",
+                 "eventid": "%s",
+                """ + transaction.toString() + """     
+                }
+                """;
     }
 }
