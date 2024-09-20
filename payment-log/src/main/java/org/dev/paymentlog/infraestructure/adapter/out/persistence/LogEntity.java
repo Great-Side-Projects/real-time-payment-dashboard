@@ -1,9 +1,6 @@
 package org.dev.paymentlog.infraestructure.adapter.out.persistence;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
@@ -22,6 +19,7 @@ public class LogEntity {
     @Id
     private String id = UUID.randomUUID().toString();
     private String action;
+    @Column(columnDefinition="varchar(1000)")
     private String details;
     private LocalDateTime createdAt = LocalDateTime.now(ZoneOffset.UTC);
 }

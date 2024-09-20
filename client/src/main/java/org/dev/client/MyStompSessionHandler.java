@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 public class MyStompSessionHandler implements StompSessionHandler {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-        session.subscribe("/topic/notifications", this);
+        session.subscribe("/transaction/notifications", this);
         System.out.println("New session established : " + session.getSessionId());
     }
 

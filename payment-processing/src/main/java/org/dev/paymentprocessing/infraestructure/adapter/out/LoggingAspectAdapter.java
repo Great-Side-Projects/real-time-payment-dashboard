@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.dev.paymentprocessing.application.port.out.ILoggingAspectPort;
 import org.dev.paymentprocessing.application.port.out.ITransactionEventTemplatePort;
-import org.dev.paymentprocessing.domain.Transaction;
 import org.dev.paymentprocessing.domain.event.TransactionReceivedEvent;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -26,11 +25,24 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
     @After("execution(* org.dev.paymentprocessing.application.service.TransactionService.filterTransactions(..)) &&  args(status, userId, minAmount, maxAmount, transactionId, nextPagingState, size)")
     @Override
     public void logFilterTransactions(String status, String userId, Double minAmount, Double maxAmount, String transactionId, String nextPagingState, int size) {
-        String action = "Filter Transactions";
-        String details = String.format("Filter applied: {Status: %s, UserId: %s, MinAmount: %s, MaxAmount: %s, TransactionId: %s, Page: %s, Size: %d}",
-                status, userId, minAmount, maxAmount, transactionId, nextPagingState, size);
-        String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
 
+        String action = "Filter Transactions";
+
+        String details = """
+                {
+                "filterapplied": {
+                    "status": "%s",
+                    "userId": "%s",
+                    "minamount": "%s",
+                    "maxamount": "%s",
+                    "transactionId": "%s",
+                    "nextpagingstate": "%s",
+                    "size": %d
+                    }
+                }
+                """.formatted(status, userId, minAmount, maxAmount, transactionId, nextPagingState, size);
+
+        String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
         transactionRabbitMQTemplateAdapter.send(new String[]{actionLogMessage});
     }
 
@@ -44,7 +56,15 @@ public class LoggingAspectAdapter implements ILoggingAspectPort {
         List<String> logMessages = new ArrayList<>();
         transactionReceivedEvent.getData().forEach(transaction -> {
             String action = "Process Transaction";
-            String details = String.format("Processed transaction: EventId: %s %s ", transactionReceivedEvent.getId(), transaction.toString());
+
+            String details = """
+                    {
+                        "eventtype": "%s",
+                        "eventid": "%s",
+                    """ + transaction.toString() + """
+                    }
+                    """;
+            details = details.formatted(transactionReceivedEvent.getType(), transactionReceivedEvent.getId());
 
             String actionLogMessage = String.format("%s%s%s", action, SEPARATOR, details);
             logMessages.add(actionLogMessage);
