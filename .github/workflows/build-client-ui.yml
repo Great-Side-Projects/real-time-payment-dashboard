@@ -1,4 +1,4 @@
-name: Payment Websocket Notification
+name: Payment Client UI
 
 on:
   push:
