@@ -10,7 +10,7 @@ env:
   AZURE_CONTAINER_REGISTRY: paymentclientui
   WEBAPP_NAME: payment-client-ui
   #RESOURCE_GROUP: sideprojects
-  #WORKING_DIRECTORY: payment-client-ui
+  WORKING_DIRECTORY: payment-client-ui
   DOCKERFILE: Dockerfile_client_ui
 
 jobs:
