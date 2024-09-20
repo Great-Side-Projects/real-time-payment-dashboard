@@ -8,24 +8,30 @@ import { Transaction } from '../types'
 import { UserIds } from '../utils'
 
 type TransactionFormProps = {
-  onSubmit: (transaction: Transaction) => void
+  onSubmit: (transaction: Transaction[]) => void
 }
 
 export default function TransactionForm({ onSubmit }: TransactionFormProps) {
   const [amount, setAmount] = useState('')
   const [status, setStatus] = useState<'success' | 'failure'>('success')
   const [userid, setUserid] = useState('U1')
+  const [bulkCount, setBulkCount] = useState('1')
 
   const createTransaction = (isRandom = false) => {
-    const transaction: Transaction = {
+    
+    let count = 1
+    if(isRandom) 
+      count = parseInt(bulkCount)
+   
+    const transactions: Transaction[] = Array.from({ length: count }, () => ({
       id: crypto.randomUUID(),
-      amount: isRandom ? Math.floor(Math.random() * 1000) : parseInt(amount),
+      amount: isRandom ? Math.floor(Math.random() * 2000) : parseInt(amount) ? parseInt(amount) : 0,
       status: isRandom ? (Math.random() < 0.5 ? 'success' : 'failure') : status,
       time: new Date().toISOString(),
       location: isRandom ? getRandomCountryCode() : "US",
       userid: isRandom ? getRandomUserid() : userid
-    }
-    onSubmit(transaction)
+    }))
+    onSubmit(transactions)
   }
 
   return (
@@ -69,6 +75,16 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
             <Button variant="outline" onClick={() => createTransaction(true)}>
               Generate Random Transaction
             </Button>
+            <Input
+              type="number"
+              value={bulkCount}
+              onChange={(e) => setBulkCount(e.target.value)}
+              max={10}
+              min={1}
+              className="w-20"
+              aria-label="Number of random transactions" 
+              readOnly={!bulkCount}
+            />
           </div>
         </div>
       </CardContent>

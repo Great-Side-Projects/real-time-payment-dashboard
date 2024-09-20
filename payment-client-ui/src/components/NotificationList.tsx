@@ -14,7 +14,7 @@ export default function NotificationList({ notifications }: NotificationListProp
         <CardTitle>Recent Notifications</CardTitle>
       </CardHeader>
       <CardContent>
-      <div className="h-[400px] overflow-y-auto pr-2">
+      <div className="h-[500px] overflow-y-auto pr-2">
           {notifications.map((notification, index) => (
             <Alert 
               key={index} 

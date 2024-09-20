@@ -9,9 +9,11 @@ import {initializeWebSocket} from '../services/websocket'
 import {Notification, Transaction} from '../types'
 import {Toaster} from "@/components/ui/toaster"
 import {useToast} from "@/hooks/use-toast"
+import TransactionConsole from '../components/TransactionConsole'
 
 export default function Dashboard() {
     const [notifications, setNotifications] = useState<Notification[]>([])
+    const [consoleTransactions, setConsoleTransactions] = useState<Transaction[]>([])
     const {toast} = useToast()
     useEffect(() => {
         const closeWebSocket = initializeWebSocket((notification) => {
@@ -21,9 +23,12 @@ export default function Dashboard() {
         return closeWebSocket
     }, [])
 
-    const handleTransactionSubmit = async (transaction: Transaction) => {
+    const handleTransactionSubmit = async (transactions: Transaction[]) => {
         try {
-            await sendTransaction(transaction)
+            setConsoleTransactions(prev => [...prev, ...transactions].slice(-50))
+            await sendTransaction(transactions)
+            
+            
             toast({
                 title: "Transaction Sent",
                 description: "Transaction was sent successfully",
@@ -41,10 +46,14 @@ export default function Dashboard() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-6">Advanced Real-Time Payment Processing Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center">Advanced Real-Time Payment Processing Dashboard</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TransactionForm onSubmit={handleTransactionSubmit}/>
+              <div>
+                <TransactionForm onSubmit={handleTransactionSubmit}
+                />
+                <TransactionConsole transactions={consoleTransactions} />
+              </div>
                 <NotificationList notifications={notifications}/>
             </div>
 
