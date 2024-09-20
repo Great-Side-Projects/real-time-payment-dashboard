@@ -15,7 +15,7 @@ public class FailureNotificationStrategy implements INotificationStrategy {
     public String getMessage(Transaction transaction) {
         return """
                 {
-                 "Notificationtype": "failurenotification",
+                 "notificationtype": "failurenotification",
                  "eventid": "%s",
                 """ + transaction.toString() + """     
                 }

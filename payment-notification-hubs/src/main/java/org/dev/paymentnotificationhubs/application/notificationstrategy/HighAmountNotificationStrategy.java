@@ -17,7 +17,7 @@ public class HighAmountNotificationStrategy implements INotificationStrategy {
     public String getMessage(Transaction transaction) {
         return """
                 {
-                 "Notificationtype": "highamountnotification",
+                 "notificationtype": "highamountnotification",
                  "eventid": "%s",
                 """ + transaction.toString() + """     
                 }
