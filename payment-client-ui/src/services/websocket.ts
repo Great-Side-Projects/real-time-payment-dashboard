@@ -1,20 +1,44 @@
-import { Notification } from '../types'
+import { Client, messageCallbackType } from '@stomp/stompjs';
+import { Notification } from '../types';
 
-type WebSocketCallback = (notification: Notification) => void
+type WebSocketCallback = (notification: Notification) => void;
 
 export const initializeWebSocket = (callback: WebSocketCallback): (() => void) => {
-  
-  const socket = new WebSocket(`${process.env.NEXT_PUBLIC_PAYMENT_WEBSOCKET_NOTIFICATION}/transaction/notifications`);
-  
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data)
-    const notificationType = data.message.includes('HighAmount') ? 'HighAmount' : 'Failure'
-    const notification: Notification = {
-      type: notificationType,
-      Transaction: data.Transaction
-    }
-    callback(notification)
-  }
+  const client = new Client({
+    brokerURL: `${process.env.NEXT_PUBLIC_PAYMENT_WEBSOCKET_NOTIFICATION}`,
+    debug: function (str) {
+    //  console.log(str);
+    },
+    reconnectDelay: 5000,
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
+  });
 
-  return () => socket.close()
-}
+  client.onConnect = function (frame) {
+    //console.log('Connected: ' + frame);
+    client.subscribe('/transaction/notifications', function (message) {
+      const data = JSON.parse(message.body);
+      console.log('Received json: ' + data);
+      
+      const notificationType = data.Notificationtype;
+      const notification: Notification = {
+        type: notificationType,
+        Transaction: data.transaction
+      };
+      callback(notification);
+    } as messageCallbackType);
+  };
+
+  client.onStompError = function (frame) {
+    console.log('Broker reported error: ' + frame.headers['message']);
+    console.log('Additional details: ' + frame.body);
+  };
+
+  client.activate();
+
+  return () => {
+    if (client.active) {
+      client.deactivate();
+    }
+  };
+};

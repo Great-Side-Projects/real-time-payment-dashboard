@@ -8,6 +8,6 @@ export type Transaction = {
   }
   
   export type Notification = {
-    type: 'HighAmount' | 'Failure'
+    type: 'highamountnotification' | 'failurenotification'
     Transaction: Transaction
   }

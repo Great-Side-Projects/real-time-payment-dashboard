@@ -18,14 +18,14 @@ export default function NotificationList({ notifications }: NotificationListProp
           {notifications.map((notification, index) => (
             <Alert 
               key={index} 
-              variant={notification.type === 'HighAmount' ? 'default' : 'destructive'}
+              variant={notification.type === 'highamountnotification' ? 'default' : 'destructive'}
             >
-              {notification.type === 'HighAmount' ? (
+              {notification.type === 'highamountnotification' ? (
                 <DollarSign className="h-4 w-4" />
               ) : (
                 <AlertTriangle className="h-4 w-4" />
               )}
-              <AlertTitle>{notification.type === 'HighAmount' ? 'High Amount' : 'Failure'} Notification</AlertTitle>
+              <AlertTitle>{notification.type === 'highamountnotification' ? 'High Amount' : 'Failure'} Notification</AlertTitle>
               <AlertDescription>
                 ID: {notification.Transaction.id}<br />
                 Amount: ${notification.Transaction.amount}<br />
