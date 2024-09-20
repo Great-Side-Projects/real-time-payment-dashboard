@@ -6,7 +6,7 @@ type WebSocketCallback = (notification: Notification) => void;
 export const initializeWebSocket = (callback: WebSocketCallback): (() => void) => {
   const client = new Client({
     brokerURL: `${process.env.NEXT_PUBLIC_PAYMENT_WEBSOCKET_NOTIFICATION}`,
-    debug: function (str) {
+    debug: function (/*str*/) {
     //  console.log(str);
     },
     reconnectDelay: 5000,
@@ -14,7 +14,7 @@ export const initializeWebSocket = (callback: WebSocketCallback): (() => void) =
     heartbeatOutgoing: 4000,
   });
 
-  client.onConnect = function (frame) {
+  client.onConnect = function (/*frame*/) {
     //console.log('Connected: ' + frame);
     client.subscribe('/transaction/notifications', function (message) {
       const data = JSON.parse(message.body);
