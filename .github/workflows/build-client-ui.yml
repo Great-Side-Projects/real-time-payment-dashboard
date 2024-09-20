@@ -1,0 +1,98 @@
+name: Payment Websocket Notification
+
+on:
+  push:
+    paths:
+      - 'payment-client-ui/**'
+  # Allow manual trigger
+  workflow_dispatch:
+env:
+  AZURE_CONTAINER_REGISTRY: paymentclientui
+  WEBAPP_NAME: payment-client-ui
+  #RESOURCE_GROUP: sideprojects
+  #WORKING_DIRECTORY: payment-client-ui
+  DOCKERFILE: Dockerfile_client_ui
+
+jobs:
+  #build:
+  #  name: Build and analyze
+  #  runs-on: ubuntu-latest
+
+  #  steps:
+  #    - uses: actions/checkout@v4
+  #      with:
+  #        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+  #    - name: Set up JDK 22
+  #      uses: actions/setup-java@v1
+  #      with:
+  #        java-version: 22
+  #    - name: Cache SonarQube packages
+  #      uses: actions/cache@v1
+  #      with:
+  #        path: ~/.sonar/cache
+  #        key: ${{ runner.os }}-sonar
+  #        restore-keys: ${{ runner.os }}-sonar
+  #    - name: Cache Maven packages
+  #      uses: actions/cache@v1
+  #      with:
+  #        path: ~/.m2
+  #        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+  #        restore-keys: ${{ runner.os }}-m2
+  #    - name: Build and analyze
+  #      env:
+  #        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PAYMENT_WEBSOCKET_NOTIFICATION }}
+  #        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #        SPRING_RABBITMQ_HOST: ${{ secrets.SPRING_RABBITMQ_HOST }}
+  #        SPRING_RABBITMQ_PORT: ${{ secrets.SPRING_RABBITMQ_PORT }}
+  #        SPRING_RABBITMQ_USERNAME: ${{ secrets.SPRING_RABBITMQ_USERNAME }}
+  #        SPRING_RABBITMQ_PASSWORD: ${{ secrets.SPRING_RABBITMQ_PASSWORD }}
+  #      run: mvn -B -f ${{env.WORKING_DIRECTORY}}/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=payment-client-ui -Dsonar.projectName='payment-client-ui'
+
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v5
+        with:
+          #context: .
+          file: ./Dockerfile_client_ui
+          push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.WEBAPP_NAME }}:${{ github.sha }}
+          #no los esta tomando el docker file
+          build-args: |
+            KIBANA_DASHBOARD_URL=${{ vars.KIBANA_DASHBOARD_URL }}
+            PAYMENT_INGESTION_URL=${{ vars.PAYMENT_INGESTION_URL }}
+            PAYMENT_WEBSOCKET_NOTIFICATION=${{ vars.PAYMENT_WEBSOCKET_NOTIFICATION }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        env:
+          IMAGENAME: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.WEBAPP_NAME }}:${{ github.sha }}
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          slot-name: 'production'
+          images: ${{ env.IMAGENAME }}
+
+         # appSourcePath: ${{ github.workspace }}/${{ env.WORKING_DIRECTORY }}
+         # acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
+         # dockerfilePath: ${{ env.DOCKERFILE }}
+         # containerAppName: ${{ env.CONTAINER_APP_NAME }}
+         # imageToBuild: ${{ env.IMAGENAME }}
+         # imageToDeploy: ${{ env.IMAGENAME }}
+         # resourceGroup: ${{ env.RESOURCE_GROUP }}
+         # buildArguments: |
+         #   "RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}"
+         #   "RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}"
+         #   "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
+         #   "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
