@@ -4,6 +4,6 @@ import org.dev.paymentingestion.domain.Transaction;
 import java.util.List;
 
 public interface ITransactionServicePort {
-    List<Transaction> processTransaction(List<Transaction> transactions);
+    void processTransaction(List<Transaction> transactions);
 
 }

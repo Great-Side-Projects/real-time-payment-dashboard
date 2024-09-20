@@ -18,14 +18,13 @@ public class TransactionService implements ITransactionServicePort {
 
     @Transactional
     @Override
-    public List<Transaction> processTransaction(List<Transaction> transactions) {
+    public void processTransaction(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
-            return List.of();
+            return;
         }
         long startTime = System.currentTimeMillis();
         transactionEventStreamingAdapter.sendReceivedEvent(transactions);
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed: " + (endTime - startTime) / 60000 + ":" + ((endTime - startTime) / 1000) % 60 + ":" + (endTime - startTime) % 1000);
-        return transactions;
     }
 }
