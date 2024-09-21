@@ -75,6 +75,11 @@ jobs:
             PAYMENT_INGESTION_URL=${{ vars.PAYMENT_INGESTION_URL }}
             PAYMENT_WEBSOCKET_NOTIFICATION=${{ vars.PAYMENT_WEBSOCKET_NOTIFICATION }}
 
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
