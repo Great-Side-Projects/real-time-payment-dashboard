@@ -72,19 +72,21 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
           </Select>
           <div className="flex space-x-2">
             <Button onClick={() => createTransaction()}>Send Transaction</Button>
-            <Button variant="outline" onClick={() => createTransaction(true)}>
-              Generate Random Transaction
-            </Button>
-            <Input
-              type="number"
-              value={bulkCount}
-              onChange={(e) => setBulkCount(e.target.value)}
-              max={10}
-              min={1}
-              className="w-20"
-              aria-label="Number of random transactions" 
-              readOnly={!bulkCount}
-            />
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" onClick={() => createTransaction(true)}>
+               Generate Random Transaction
+              </Button>
+              <Input
+                type="number"
+               value={bulkCount}
+                onChange={(e) => setBulkCount(e.target.value)}
+               max={10}
+               min={1}
+               className="w-20"
+               aria-label="Number of random transactions" 
+               readOnly={!bulkCount}
+              />
+            </div>
           </div>
         </div>
       </CardContent>

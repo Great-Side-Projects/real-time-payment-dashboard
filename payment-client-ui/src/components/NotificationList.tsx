@@ -1,7 +1,6 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertTriangle, DollarSign } from 'lucide-react'
-import { Notification } from '../types'
+import { AlertCircle, CheckCircle } from "lucide-react"
+import { Notification } from "../types"
 
 type NotificationListProps = {
   notifications: Notification[]
@@ -14,26 +13,34 @@ export default function NotificationList({ notifications }: NotificationListProp
         <CardTitle>Recent Notifications</CardTitle>
       </CardHeader>
       <CardContent>
-      <div className="h-[500px] overflow-y-auto pr-2">
+        <div className="h-[450px] overflow-y-auto pr-2">
           {notifications.map((notification, index) => (
-            <Alert 
-              key={index} 
-              variant={notification.type === 'highamountnotification' ? 'default' : 'destructive'}
+            <div
+              key={index}
+              className={`mb-4 p-4 rounded-lg flex items-start ${
+                notification.type === 'highamountnotification' ? 'bg-yellow-100' : 'bg-red-100'
+              }`}
             >
               {notification.type === 'highamountnotification' ? (
-                <DollarSign className="h-4 w-4" />
+                <AlertCircle className="text-yellow-500 mr-2 flex-shrink-0" />
               ) : (
-                <AlertTriangle className="h-4 w-4" />
+                <CheckCircle className="text-red-500 mr-2 flex-shrink-0" />
               )}
-              <AlertTitle>{notification.type === 'highamountnotification' ? 'High Amount' : 'Failure'} Notification</AlertTitle>
-              <AlertDescription>
-                ID: {notification.Transaction.id}<br />
-                Amount: ${notification.Transaction.amount}<br />
-                Status: {notification.Transaction.status}<br />
-                Location: {notification.Transaction.location}<br />
-                User ID: {notification.Transaction.userid}
-              </AlertDescription>
-            </Alert>
+              <div>
+                <h3 className="font-semibold">
+                  {notification.type === 'highamountnotification' ? 'High Amount' : 'Failure'} Notification
+                </h3>
+                <p className="text-sm">
+                  Transaction ID: {notification.Transaction.id}
+                </p>
+                <p className="text-sm">
+                  Amount: ${notification.Transaction.amount.toFixed(2)}
+                </p>
+                <p className="text-sm">
+                  User ID: {notification.Transaction.userid}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </CardContent>
