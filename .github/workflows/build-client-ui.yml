@@ -56,10 +56,12 @@ jobs:
       - name: Checkout to the branch
         uses: actions/checkout@v2
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Azure Login registry
+        uses: docker/login-action@v2.2.0
         with:
-          creds: ${{ secrets.SIDEPROJECTS_CREDENTIALS }}
+            registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+            username: ${{ secrets.PAYMENTUI_REGISTRY_USERNAME }}
+            password: ${{ secrets.PAYMENTUI_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v5
@@ -68,7 +70,6 @@ jobs:
           file: ./${{ env.WORKING_DIRECTORY }}/${{ env.DOCKERFILE }}
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.WEBAPP_NAME }}:${{ github.sha }}
-          #no los esta tomando el docker file
           build-args: |
             KIBANA_DASHBOARD_URL=${{ vars.KIBANA_DASHBOARD_URL }}
             PAYMENT_INGESTION_URL=${{ vars.PAYMENT_INGESTION_URL }}
@@ -76,23 +77,10 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         env:
           IMAGENAME: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.WEBAPP_NAME }}:${{ github.sha }}
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           slot-name: 'production'
           images: ${{ env.IMAGENAME }}
-
-         # appSourcePath: ${{ github.workspace }}/${{ env.WORKING_DIRECTORY }}
-         # acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
-         # dockerfilePath: ${{ env.DOCKERFILE }}
-         # containerAppName: ${{ env.CONTAINER_APP_NAME }}
-         # imageToBuild: ${{ env.IMAGENAME }}
-         # imageToDeploy: ${{ env.IMAGENAME }}
-         # resourceGroup: ${{ env.RESOURCE_GROUP }}
-         # buildArguments: |
-         #   "RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}"
-         #   "RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}"
-         #   "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
-         #   "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
