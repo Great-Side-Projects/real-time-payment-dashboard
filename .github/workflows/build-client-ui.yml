@@ -6,6 +6,16 @@ on:
       - 'payment-client-ui/**'
   # Allow manual trigger
   workflow_dispatch:
+    inputs:
+      job_to_run:
+        description: 'Job to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - build-and-analyze
+          - build-and-deploy
 env:
   AZURE_CONTAINER_REGISTRY: paymentclientui
   WEBAPP_NAME: payment-client-ui
@@ -13,9 +23,10 @@ env:
   DOCKERFILE: Dockerfile_client_ui
 
 jobs:
-  build:
+  build-and-analyze:
     name: Build and analyze
     runs-on: ubuntu-latest
+    if: github.event.inputs.job_to_run == 'build-and-analyze' || github.event.inputs.job_to_run == 'all' || github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +63,7 @@ jobs:
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
+    if: github.event.inputs.job_to_run == 'build-and-deploy' || github.event.inputs.job_to_run == 'all' || github.event_name == 'push'
 
     steps:
       - name: Checkout to the branch
