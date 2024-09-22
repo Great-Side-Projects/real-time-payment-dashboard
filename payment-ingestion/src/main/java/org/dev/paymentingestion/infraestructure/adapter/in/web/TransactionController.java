@@ -36,7 +36,7 @@ public class TransactionController {
     @ApiResponse(responseCode = "400", description = "Invalid input")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/process")
-
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public void processTransaction(
             @RequestBody
             @Parameter(description = "List of transactions")
