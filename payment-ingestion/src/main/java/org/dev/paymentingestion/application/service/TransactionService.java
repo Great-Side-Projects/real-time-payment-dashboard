@@ -22,6 +22,11 @@ public class TransactionService implements ITransactionServicePort {
         if (transactions.isEmpty()) {
             return;
         }
+
+        if (transactions.size() > 10) {
+            throw new IllegalArgumentException("The maximum number of transactions per request is 10");
+        }
+
         long startTime = System.currentTimeMillis();
         transactionEventStreamingAdapter.sendReceivedEvent(transactions);
         long endTime = System.currentTimeMillis();
