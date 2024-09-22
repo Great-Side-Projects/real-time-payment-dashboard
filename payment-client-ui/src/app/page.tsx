@@ -45,23 +45,28 @@ export default function Dashboard() {
 
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">Advanced Real-Time Payment Processing Dashboard</h1>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <TransactionForm 
-            onSubmit={handleTransactionSubmit}/>
-          <TransactionConsole transactions={consoleTransactions} />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center pt-4">
+          Advanced Real-Time Payment Processing Dashboard
+        </h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <TransactionForm 
+              onSubmit={handleTransactionSubmit} />
+            <div className="mt-6">
+              <TransactionConsole transactions={consoleTransactions} />
+            </div>
+          </div>
+          <div>
+            <NotificationList notifications={notifications} />
+          </div>
         </div>
-        <div>
-          <NotificationList notifications={notifications} />
-        </div>
-      </div>
 
-      <div className="mt-6">
-        <KibanaDashboard />
-      </div>
+        <div className="mt-8">
+          <KibanaDashboard />
+        </div>
+
 
             <Toaster/>
         </div>
