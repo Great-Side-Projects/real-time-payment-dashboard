@@ -92,19 +92,10 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button onClick={() => createTransaction()} className="w-full">Send Transaction</Button>
-            <div className="flex space-x-2">
+            <div className="flex items-center space-x-2">
               <Button variant="outline" onClick={() => createTransaction(true)} className="flex-grow">
               Send Random Transaction
               </Button>
-              <Input
-                type="number"
-                value={bulkCount}
-                onChange={(e) => setBulkCount(e.target.value)}
-                min="1"
-                max="10"
-                className="w-16"
-              />
-            </div>
             <div className="flex items-center border rounded-md">
                 <Button 
                   variant="ghost" 
@@ -125,8 +116,8 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
                 >
                   <PlusIcon className="h-4 w-4" />
                 </Button>
+                </div>
               </div>
-
           </div>
         </div>
       </CardContent>
