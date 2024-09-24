@@ -15,7 +15,7 @@ export default function NotificationList({ notifications }: NotificationListProp
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
       if (scrollContainer) {
-        //scrollContainer.scrollTop = 0
+        scrollContainer.scrollTop = 0
       }
     }
   }, [notifications])
