@@ -27,3 +27,5 @@ replay_pid*
 node_modules/
 .idea/
 payment-processing-dashboard/last_known_position.txt
+log-generator/
+client/
