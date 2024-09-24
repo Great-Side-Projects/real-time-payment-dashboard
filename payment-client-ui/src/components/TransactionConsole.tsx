@@ -19,11 +19,11 @@ export default function TransactionConsole({ transactions }: TransactionConsoleP
   }, [transactions])
 
   return (
-    <div className="bg-black text-green-400 font-mono rounded-lg p-4 mt-4">
-      <h3 className="text-xl mb-2">Transaction Console</h3>
-      <ScrollArea className="h-40" ref={scrollAreaRef}>
+    <div className="bg-black text-green-400 font-mono rounded-lg p-4">
+      <h3 className="text-lg mb-2">Transaction Console</h3>
+      <ScrollArea className="h-[479px]" ref={scrollAreaRef}>
         {transactions.map((transaction, index) => (
-          <div key={index} className="mb-1 text-xs">
+          <div key={index} className="mb-1 text-[10px] leading-tight">
             <span className="text-yellow-400">$</span> Transaction sent: 
             ID: {transaction.id} | 
             Amount: ${transaction.amount} | 

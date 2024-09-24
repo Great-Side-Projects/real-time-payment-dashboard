@@ -55,7 +55,21 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		keyframes: {
+		highlight: {
+			'0%': {
+	    	//color notification
+			background: '#2D87E2',
+			},
+			'100%': {
+			background: 'none',
+			},
+		}
+		},
+		animation: {
+		highlight: 'highlight 1s',
+		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
