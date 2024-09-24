@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: text/html, text/xml, text/plain, text/css, text/javascript, application/javascript, application/json
+    min-response-size: 2048
+spring:
+    application:
+        name: payment-ingestion
+    kafka:
+      bootstrap-servers: 20.64.115.37:9092
+      properties:
+        sasl.mechanism: PLAIN
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='realtime' password='Gelo+123';
+      security:
+        #if you require autentication use SASL_SSL instead of PLAINTEXT and configure the username and password
+        protocol: SASL_PLAINTEXT #SASL_SSL
+        #protocol: PLAINTEXT
+      topic:
+        name: payment
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        acks: all
+        client-id: payment-ingestion
+        properties:
+          max.block.ms: 2000
+          retries: 3
+          max.request.size: 20485760
+
+#configuration for resilience4j
+resilience4j.circuitbreaker:
+  backends:
+    transactionEventStreaming:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10m
+      slidingWindowSize: 5
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.kafka.KafkaException
+        - org.apache.kafka.common.errors.TimeoutException
+        - org.apache.kafka.common.errors.SerializationException
+#Swagger configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  open-api:
+    info:
+      title: Payment Ingestion API Documentation
+      description: This is the API documentation for the Payment Ingestion
+      version: 1.0.0
+      #termsOfService: https://quickshort.com/terms
+      license:
+        name: No License
+        url: https://github.com/Great-Side-Projects/
+      contact:
+        name: Angel Morales
+        email: angelmoralesb@gmail.com

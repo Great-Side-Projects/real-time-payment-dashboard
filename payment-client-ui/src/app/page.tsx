@@ -45,7 +45,7 @@ export default function Dashboard() {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center pt-4">
+            <h1 className="text-5xl sm:text-4xl font-bold mb-8 text-center pt-4">
                 Advanced Real-Time Payment Processing Dashboard
             </h1>
 

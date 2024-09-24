@@ -1,0 +1,158 @@
+server:
+  port: 8081
+  compression:
+    enabled: true
+    mime-types: text/html, text/xml, text/plain, text/css, text/javascript, application/javascript, application/json
+    min-response-size: 2048
+spring:
+  #threads:
+  #  virtual:
+  #    enabled: true
+  application:
+    name: payment-processing
+  datasource:
+    hikari:
+      connection-timeout: 5000
+      maximum-pool-size: 50
+      minimum-idle: 5
+      max-lifetime: 1800000
+      validation-timeout: 5000
+      idle-timeout: 600000
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      #leak-detection-threshold: 60000
+      register-mbeans: true
+  cassandra:
+    keyspace-name: payment
+    contact-points: localhosr
+    port: 10350
+    username: user
+    password: pass
+    ssl:
+      enabled: true
+    local-datacenter: datacenter1
+    schema-action: CREATE_IF_NOT_EXISTS
+    request:
+      timeout: 120s
+      throttler:
+        max-queue-size: 1000
+        max-concurrent-requests: 1000
+    pool:
+      idle-timeout: 1s
+  rabbitmq:
+    host: localhost
+    port: 0
+    username: user
+    password: pass
+    queue:
+      name: paymentprocessing_log
+    connection-timeout: 1000
+  #Kafka configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='user' password='pass';
+    security:
+      #if you require autentication use SASL_SSL instead of PLAINTEXT and configure the username and password
+      protocol: SASL_PLAINTEXT #SASL_SSL
+      #protocol: PLAINTEXT
+    topic:
+      name: payment
+    consumer:
+      group-id: payment-processing
+      auto-offset-reset: earliest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        request.timeout.ms: 70000
+        max.poll.interval.ms: 300000
+        max.poll.records: 500
+        spring:
+          json:
+            trusted:
+              packages: '*'
+            type:
+              mapping: org.dev.paymentingestion.domain.event.TransactionReceivedEvent:org.dev.paymentprocessing.domain.event.TransactionReceivedEvent
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+      fetch-max-wait: 60000
+    listener:
+      poll-timeout: 60000
+#configuration for resilience4j
+resilience4j.circuitbreaker:
+  backends:
+    transactionPersistence:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 1m
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 10
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.dao.DataAccessException
+        - org.springframework.dao.DataAccessResourceFailureException
+        - org.springframework.dao.QueryTimeoutException
+        - org.springframework.dao.TransientDataAccessResourceException
+        - org.springframework.dao.CannotAcquireLockException
+        - org.springframework.dao.CleanupFailureDataAccessException
+        - org.springframework.dao.ConcurrencyFailureException
+        - org.springframework.dao.DataIntegrityViolationException
+        - org.springframework.dao.DeadlockLoserDataAccessException
+        - org.springframework.dao.PermissionDeniedDataAccessException
+    transactionRabbitMQEvent:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 1m
+      slidingWindowSize: 5
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+#Swagger configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  open-api:
+    info:
+      title: Payment Processing API Documentation
+      description: This is the API documentation for the Payment Processing
+      version: 1.0.0
+      #termsOfService: https://quickshort.com/terms
+      license:
+        name: No License
+        url: https://github.com/Great-Side-Projects/
+      contact:
+        name: Angel Morales
+        email: angelmoralesb@gmail.com
+

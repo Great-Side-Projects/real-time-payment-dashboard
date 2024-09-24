@@ -1,0 +1,61 @@
+server:
+  port: 8082
+spring:
+    application:
+        name: payment-log
+    datasource:
+      url: jdbc:mysql://localhost
+      username: user
+      password: pass
+      hikari:
+        connection-timeout: 5000
+        maximum-pool-size: 10
+        minimum-idle: 5
+        max-lifetime: 1800000
+        validation-timeout: 5000
+        idle-timeout: 600000
+        #leak-detection-threshold: 60000
+        register-mbeans: true
+    jpa:
+      generate-ddl: true
+      properties:
+        hibernate:
+          hbm2ddl:
+            auto: update
+          show_sql: false
+          generate_statistics: false
+          jdbc:
+            batch_size: 5000
+          order_updates: false
+          order_inserts: false
+    rabbitmq:
+      host: localhost
+      port: 0
+      username: user
+      password: pass
+      queue:
+        name: paymentprocessing_log
+      connection-timeout: 1000
+#configuration for resilience4j
+resilience4j.circuitbreaker:
+  backends:
+    logPersistence:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 1m
+      slidingWindowSize: 5
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.dao.DataAccessException
+        - org.springframework.dao.DataAccessResourceFailureException
+        - org.springframework.dao.QueryTimeoutException
+        - org.springframework.dao.TransientDataAccessResourceException
+        - org.springframework.dao.CannotAcquireLockException
+        - org.springframework.dao.CleanupFailureDataAccessException
+        - org.springframework.dao.ConcurrencyFailureException
+        - org.springframework.dao.DataIntegrityViolationException
+        - org.springframework.dao.DeadlockLoserDataAccessException
+        - org.springframework.dao.PermissionDeniedDataAccessException

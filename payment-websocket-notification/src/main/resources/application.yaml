@@ -1,0 +1,57 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: payment-websocket-notification
+#configuration websocker
+  websocket:
+    destination: /transaction/notifications
+      #endpoint: /ws
+      #message-broker:
+    #prefix: /topic
+    #application-destination-prefixes: /app
+  rabbitmq:
+    host: localhost
+    port: 0
+    username: user
+    password: pass
+    queue:
+      websocket: paymentwebsocket_notification
+      log: paymentprocessing_log
+resilience4j.circuitbreaker:
+  backends:
+    transactionRabbitMQEvent:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 1m
+      slidingWindowSize: 5
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException

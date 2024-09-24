@@ -1,0 +1,91 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: payment-notification-hubs
+  rabbitmq:
+    host: localhost
+    port: 0
+    username: user
+    password: pass
+    notification-queues:
+      -
+        type: websocket
+        name: paymentwebsocket_notification
+        enabled: true
+      -
+        type: email
+        name: paymentemail_notification
+        enabled: false
+      -
+        type: sms
+        name: paymentsms_notification
+        enabled: false
+    connection-timeout: 1000
+  kafka:
+    bootstrap-servers: localhost:0
+    properties:
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='user' password='pass';
+    security:
+      #if you require autentication use SASL_SSL instead of PLAINTEXT and configure the username and password
+      protocol: SASL_PLAINTEXT #SASL_SSL
+      #protocol: PLAINTEXT
+    topic:
+      name: payment
+    consumer:
+      group-id: payment-notification-hubs
+      auto-offset-reset: earliest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        request.timeout.ms: 70000
+        max.poll.interval.ms: 300000
+        max.poll.records: 500
+        spring:
+          json:
+            trusted:
+              packages: '*'
+            type:
+              mapping: org.dev.paymentingestion.domain.event.TransactionReceivedEvent:org.dev.paymentnotificationhubs.domain.event.TransactionReceivedEvent
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+      fetch-max-wait: 60000
+    listener:
+      poll-timeout: 60000
+resilience4j.circuitbreaker:
+  backends:
+    transactionRabbitMQEvent:
+      registerHealthIndicator: true
+      failureRateThreshold: 50
+      waitDurationInOpenState: 1m
+      slidingWindowSize: 5
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 1
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 100
+      recordExceptions:
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpException
+        - org.springframework.amqp.AmqpIOException
+        - org.springframework.amqp.AmqpConnectException
+        - org.springframework.amqp.AmqpAuthenticationException
+        - org.springframework.amqp.AmqpTimeoutException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException
+        - org.springframework.amqp.AmqpResourceNotAvailableException
+        - org.springframework.amqp.AmqpUnsupportedEncodingException

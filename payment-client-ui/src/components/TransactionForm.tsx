@@ -19,7 +19,7 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
   const [userid, setUserid] = useState('U1')
   const [bulkCount, setBulkCount] = useState(1)
   const [isAutoSending, setIsAutoSending] = useState(false)
-  const [autoSendInterval, setAutoSendInterval] = useState(1)
+  const [autoSendInterval, setAutoSendInterval] = useState(3)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
   const createTransaction = useCallback((isRandom = false) => {
