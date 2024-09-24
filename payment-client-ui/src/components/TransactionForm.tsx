@@ -23,7 +23,12 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
   const createTransaction = useCallback((isRandom = false) => {
-    const transactions: Transaction[] = Array.from({ length: bulkCount }, () => ({
+
+    const transactions: Transaction[] = Array.from({
+      length:
+        isRandom ? bulkCount : 1
+    }, () => ({
+
       id: crypto.randomUUID(),
       amount: isRandom ? Math.floor(Math.random() * 2000) : parseInt(amount) ? parseInt(amount) : 0,
       status: isRandom ? (Math.random() < 0.5 ? 'success' : 'failure') : status,
@@ -37,7 +42,7 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
   const incrementBulkCount = () => {
     setBulkCount(prev => Math.min(prev + 1, 10))
   }
-  
+
   const decrementBulkCount = () => {
     setBulkCount(prev => Math.max(prev - 1, 1))
   }
@@ -117,14 +122,14 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
             </Select>
           </div>
           <Button onClick={() => createTransaction()} className="w-full">Send Transaction</Button>
-          
+
           <div className="space-y-4 border-t pt-4">
             <h3 className="text-lg font-semibold">Automatic Random Transactions</h3>
             <div className="flex items-center justify-between">
               <label htmlFor="bulk-count" className="text-sm font-medium">Number of Transactions:</label>
               <div className="flex items-center border rounded-md">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="icon"
                   onClick={decrementBulkCount}
                   disabled={bulkCount <= 1}
@@ -133,8 +138,8 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
                   <MinusIcon className="h-4 w-4" />
                 </Button>
                 <span id="bulk-count" className="px-2 py-1 text-center min-w-[40px]">{bulkCount}</span>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="icon"
                   onClick={incrementBulkCount}
                   disabled={bulkCount >= 10}
@@ -146,19 +151,19 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
             </div>
             <div className="space-y-2">
               <label htmlFor="auto-send-interval" className="text-sm font-medium">
-              Interval (seconds): {autoSendInterval}
+                Interval (seconds): {autoSendInterval}
               </label>
               <Slider
-              id="auto-send-interval"
-              min={1}
-              max={5}
-              step={1}
-              value={[autoSendInterval]}
-              onValueChange={(value: number[]) => setAutoSendInterval(value[0])}
-              disabled={isAutoSending}
+                id="auto-send-interval"
+                min={1}
+                max={5}
+                step={1}
+                value={[autoSendInterval]}
+                onValueChange={(value: number[]) => setAutoSendInterval(value[0])}
+                disabled={isAutoSending}
               />
             </div>
-            <Button 
+            <Button
               onClick={isAutoSending ? stopAutoSending : startAutoSending}
               variant={isAutoSending ? "destructive" : "default"}
               className="w-full"
