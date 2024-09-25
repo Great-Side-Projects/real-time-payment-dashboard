@@ -315,8 +315,7 @@ Project Link: [https://github.com/Great-Side-Projects/kafka](https://github.com/
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/Great-Side-Projects/
-real-time-payment-dashboard/graphs/contributors
+[contributors-url]: https://github.com/Great-Side-Projects/real-time-payment-dashboard/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
 [forks-url]: https://github.com/Great-Side-Projects/real-time-payment-dashboard/forks
 [stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
@@ -329,7 +328,6 @@ real-time-payment-dashboard/graphs/contributors
 [linkedin-url]: https://www.linkedin.com/in/angelmoralesb/
 [product-screenshot-UI]: images/screenshotUI.png
 [DockerImage]: https://img.shields.io/badge/Docker-0db7ed?style=for-the-badge&logo=docker&logoColor=white
-[AzureWebApp]: https://img.shields.io/badge/Azure%20Web%20App-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white
 [product-screenshot-UI2]: images/screenshotUI2.png
 [product-screenshot-UI3]: images/screenshotUI3.png
 [product-screenshot-UI4]: images/screenshotUI4.png
