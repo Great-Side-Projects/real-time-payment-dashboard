@@ -123,6 +123,31 @@ Professional version: 3 months (executed through a web interface)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Detailed process flow ##
+
+All the services are designed to be scalable and to be able to process a large number of transactions in real-time. The services are designed to be fault-tolerant and to be able to recover from failures. **The services are designed to be secure and to be able to protect the data from unauthorized access.
+
+- Nota: ** -> work in progress
+
+1. **payment-ingestion**: This service is responsible for ingesting the payment data in batch or single transaction and sending it to the distributed streaming platform (Kafka topic payment) it can be used to ingest the data from the payment client or from the payment file (with a little modification). 
+   
+2. **kafka topic payment**: This topic is responsible for storing the payment data in real-time and sending the data to consumers payment-processing and payment-notification-hub, this consumers has a group id diferent to process the data in parallel. That is to say, each consumer has a copy of the data to process it independently.
+
+3. **KsqlDB**: this component is responsible for processing the data in real-time and generating the analytics data, for example, the total amount of transactions, the total amount of transactions by type, the total transactions by user, this data is sent to another the Kafka topic to be consumed by logstash and ingested in the Elastick serach.
+
+3. **payment-processing**: This service is responsible for processing the payment data in real-time from the distributed streaming platform (Kafka topic payment) and storing the data in the database (Cassandra), also sending the log data to the log queue (RabbitMQ-paymentprocessing_log). the logs ware implemented with AOP.
+
+4. **payment-notification-hub**: This service is responsible for evaluating the payment (Bussiness Rules) data in real-time, for example, high amount or failure transaction and sending the transaction to the especific type notification, websocket, email, sms, etc. in this case, the notification is websocket type and sent to a queue (RabbitMQ-paymentwebsocket_notification) to be notified by payment-websocket-notification service.
+  
+5. **payment-websocket-notification**: This service is responsible for receiving the notification from the payment-notification-hub (RabbitMQ-paymentwebsocket_notification) and sending the notification to the websocket client (payment-client-ui) to show the notification in real-time. also sending the log data to the log queue (RabbitMQ-paymentprocessing_log). the logs ware implemented with AOP.
+   
+6. **payment-log-ingestion**: This service is responsible for ingesting the log data from the (RabbitMQ-paymentprocessing_log) in MySQL. 
+
+7. **logstash**: This component is responsible for ingesting the data from the Kafka topic (KsqlDB) and sending the data to the Elasticsearch to be indexed and shown in the Kibana dashboard. also ingesting (pulling per 1 minute) the data from the MySQL logs to be indexed in the Elasticsearch.
+
+8. **payment-client-ui**: frontend to show the data in real-time and enbedded the Kibana dashboard to show the analytics data.
+
+ 
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -134,17 +159,17 @@ This is an example of how to list things you need to use the software and how to
 
 * Docker
 * Docker-compose
-* Kafka
+* Kafka-KsqlDB
 * ELK Stack
 ### Installation
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/Great-Side-Projects/kafka.git
+   git clone https://github.com/Great-Side-Projects/real-time-payment-dashboard.git
    ```
 2. Go to the root folder of the project
    ```sh
-   cd kafka
+   cd real-time-payment-dashboard
    ``` 
 3. find a docker file "Kafaka-compose-local" and set the environment variables in the dockercompose. root folder of the project. visit the documentation of the Kafka, zookeeper and Kafka UI to set the environment variables.
 - https://hub.docker.com/r/bitnami/kafka
