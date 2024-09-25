@@ -10,7 +10,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://kafka.apache.org/">
+  <a href="">
     <img src="./images/logo.png" alt="Logo" width="400" height="">
   </a>
 
@@ -29,8 +29,6 @@
     <a href="https://github.com/Great-Side-Projects/real-time-payment-dashboard/issues/new">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -65,9 +63,8 @@
 
 [![Product Name Screen Shot][product-screenshot-UI]](https://payment-client-ui.azurewebsites.net/)
 
-
 This project originated from an interview test for a Tech Lead role at a company. The original requirement was to read a log file and process the data in real-time, printing the results to the console.
-I initially had only 5 days for the test to build the first version of the project. However, I decided to accept the challenge of building a more complex and professional project, which took me 3 months😱 to complete.
+I initially had only 5 days for the test to build the first version of the project. However, I decided to accept the challenge of building a more complex and professional project, **which took me 3 months😱** to complete.
 
 The main idea is simulating a real-time payment processing system, where the transactions are processed in real-time and the data is shown in a dashboard. The project is designed to be scalable and to be able to process a large number of transactions in real-time.
 
@@ -79,29 +76,34 @@ Thank you for reviewing the project. I hope you enjoy it.
 
 This project is built with the following technologies:
 
-
+* Quality and Code Analysis:
+  * [![SonarQube](https://img.shields.io/badge/SonarQube-4E9BCD?style=for-the-badge&logo=sonarqube&logoColor=white)](https://www.sonarqube.org/)
 * Backend:
-  * [![Docker][DockerImage]](https://www.docker.com/)
-  * Java 22
-  * SpringBoot
-  * Kafka
-  * resilience4j
-  * Cassandra
-  * RabbitMQ
-  * Kafka and KsqlDB
-  * MySQL
-  * WebSockets (STOMP) 
-  * SpringBoot AOP
-  * ELK Stack (Ingester, Dashboard)
+  * [![SpringBoot](https://img.shields.io/badge/SpringBoot-6db33f?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+  * [![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white)](https://www.java.com/es/)
+  * [![Kafka](https://img.shields.io/badge/Kafka-000000?style=for-the-badge&logo=apache-kafka&logoColor=white)](https://kafka.apache.org/)
+  * [![resilience4j](https://img.shields.io/badge/resilience4j-ff0000?style=for-the-badge&logo=resilience4j&logoColor=white)](https://resilience4j.readme.io/docs)
+  * [![Cassandra](https://img.shields.io/badge/Cassandra-1287b1?style=for-the-badge&logo=apache-cassandra&logoColor=white)](https://cassandra.apache.org/)
+  * [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-ff6600?style=for-the-badge&logo=rabbitmq&logoColor=white)](https://www.rabbitmq.com/)
+  * [![Kafka and KsqlDB](https://img.shields.io/badge/Kafka%20and%20KsqlDB-000000?style=for-the-badge&logo=apache-kafka&logoColor=white)](https://ksqldb.io/)
+  * [![MySQL](https://img.shields.io/badge/MySQL-4479a1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+  * [![WebSockets (STOMP)](https://img.shields.io/badge/WebSockets%20(STOMP)-ff6600?style=for-the-badge&logo=websocket&logoColor=white)](https://stomp.github.io/)
+  * [![SpringBoot AOP](https://img.shields.io/badge/SpringBoot%20AOP-6db33f?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+  * [![ELK Stack (Ingester, Dashboard)](https://img.shields.io/badge/ELK%20Stack%20(Ingester%2C%20Dashboard)-005571?style=for-the-badge&logo=elastic&logoColor=white)](https://www.elastic.co/elastic-stack)
+  
 * Infrastructure:
-  * Telebit Cloud
-  * Container Apps Azure
-  * Azure App Service
-  * Azure API Management
-  * GitHub Actions CI/CD
+  * [![Docker][DockerImage]](https://www.docker.com/)
+  * [![Azure App Service](https://img.shields.io/badge/Azure%20App%20Service-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/es-es/services/app-service/)
+  * [![Azure API Management](https://img.shields.io/badge/Azure%20API%20Management-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/es-es/services/api-management/)
+  * [![Telebit Cloud](https://img.shields.io/badge/Telebit%20Cloud-005571?style=for-the-badge&logo=telebit&logoColor=white)](https://telebit.cloud/)
+  * [![Container Apps Azure](https://img.shields.io/badge/Container%20Apps%20Azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/es-es/services/container-apps/)
+  * [![GitHub Actions CI/CD](https://img.shields.io/badge/GitHub%20Actions%20CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://docs.github.com/es/actions)
+  
 * Frontend:
-  * Next.js (React)
-  * tailwind CSS
+  * [![Next.js (React)](https://img.shields.io/badge/Next.js%20(React)-000000?style=for-the-badge&logo=react&logoColor=white)](https://nextjs.org/)
+  * [![tailwind CSS](https://img.shields.io/badge/tailwind%20CSS-38b2ac?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  * [![Shadcn/ui](https://img.shields.io/badge/Shadcn%2Fui-000000?style=for-the-badge&logo=github&logoColor=white)](https://ui.shadcn.com/) 
+  
 
 ### Architecture design
 
@@ -111,11 +113,13 @@ The architecture design is based on the hexagonal architecture and the microserv
 
 ### Architecture diagram
 
-Initial version (Interview test):
-[![Architecture diagram][architecture-diagram]](http://20.64.115.37:8090/auth)
+Initial version (Interview test): 5 days (executed through a console-terminal)
 
-Professional version: 
-[![Architecture diagram][architecture-diagram]](http://
+[![Architecture diagram][architecture-diagram]](http://)
+
+Professional version: 3 months (executed through a web interface)
+
+[![Architecture diagram][architecture-diagram2]](http://)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -328,6 +332,11 @@ Project Link: [https://github.com/Great-Side-Projects/kafka](https://github.com/
 [linkedin-url]: https://www.linkedin.com/in/angelmoralesb/
 [product-screenshot-UI]: images/screenshotUI.png
 [DockerImage]: https://img.shields.io/badge/Docker-0db7ed?style=for-the-badge&logo=docker&logoColor=white
+
+[architecture-diagram]: images/architecture-diagram1.png
+[architecture-diagram2]: images/architecture-diagram2.png
+
+
 [product-screenshot-UI2]: images/screenshotUI2.png
 [product-screenshot-UI3]: images/screenshotUI3.png
 [product-screenshot-UI4]: images/screenshotUI4.png
