@@ -5,7 +5,7 @@ curl -X "POST" "http://localhost:8088/ksql" \
      -H "Accept: application/vnd.ksql.v1+json" \
      -H "Content-Type: application/json" \
      -d $'{
-  "ksql": "CREATE STREAM payment_stream ( id STRING, date BIGINT, type STRING, data ARRAY<STRUCT<id STRING, amount INTEGER, status STRING, time STRING, location STRING, userId STRING>> ) WITH (KAFKA_TOPIC=\'payment\', VALUE_FORMAT=\'JSON\');",
+  "ksql": "CREATE OR REPLACE STREAM payment_stream ( id STRING, date BIGINT, type STRING, data ARRAY<STRUCT<id STRING, amount INTEGER, status STRING, time STRING, location STRING, userid STRING>> ) WITH (KAFKA_TOPIC=\'payment\', VALUE_FORMAT=\'JSON\');",
   "streamsProperties": {}
 }'
 
