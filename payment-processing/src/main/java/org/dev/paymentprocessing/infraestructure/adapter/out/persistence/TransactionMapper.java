@@ -12,7 +12,7 @@ public class TransactionMapper {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setEventId(eventId);
         transactionEntity.setId(transaction.getId());
-        transactionEntity.setUserid(transaction.getUserId());
+        transactionEntity.setUserid(transaction.getUserid());
         transactionEntity.setAmount(transaction.getAmount());
         transactionEntity.setStatus(transaction.getStatus());
         transactionEntity.setTime(transaction.getTime());
