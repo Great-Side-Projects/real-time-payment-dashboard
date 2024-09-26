@@ -2,7 +2,7 @@ package org.dev.paymentnotificationhubs.domain;
 
 public class Transaction  {
     private String id;
-    private String userId;
+    private String userid;
     private double amount;
     private String status;
     private String time;
@@ -13,7 +13,7 @@ public class Transaction  {
 
     public Transaction(String id, String userid, double amount, String status, String time, String location) {
         this.id = id;
-        this.userId = userid;
+        this.userid = userid;
         this.amount = amount;
         this.status = status;
         this.time = time;
@@ -26,7 +26,7 @@ public class Transaction  {
 
 
     public String getUserid() {
-        return userId;
+        return userid;
     }
 
     public double getAmount() {
@@ -49,6 +49,6 @@ public class Transaction  {
     public String toString() {
         return """
                 "transaction": {"id": "%s", "userid": "%s", "amount": %f, "status": "%s", "time": "%s", "location": "%s"}"""
-                .formatted(id, userId, amount, status, time, location);
+                .formatted(id, userid, amount, status, time, location);
     }
 }
