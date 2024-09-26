@@ -4,7 +4,7 @@ import org.dev.paymentingestion.domain.Transaction;
 import java.util.Date;
 import java.util.List;
 
-public class TransactionReceivedEvent extends Event<List<Transaction>>{
+public class TransactionReceivedEvent extends Event<List<Transaction>> {
 
     public TransactionReceivedEvent(String id, Date date, EventType type, List<Transaction> data) {
         this.setId(id);

@@ -30,8 +30,8 @@ public class TransactionEventStreamingAdapter implements ITransactionEventStream
     public void sendReceivedEvent(List<Transaction> transaction) {
 
         if (transaction.size() < CHUNK_SIZE) {
-            TransactionReceivedEvent processed = TransactionMapper.toTransactionProcessedEvent(transaction);
-            transactionEventKafkaTemplateAdapter.send(processed);
+            TransactionReceivedEvent received = TransactionMapper.toTransactionProcessedEvent(transaction);
+            transactionEventKafkaTemplateAdapter.send(received);
             return;
         }
 
