@@ -85,7 +85,8 @@ jobs:
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.WEBAPP_NAME }}:${{ github.sha }}
           build-args: |
             KIBANA_DASHBOARD_URL=${{ vars.KIBANA_DASHBOARD_URL }}
-            PAYMENT_URL=${{ vars.PAYMENT_URL }}
+            PAYMENT_INGESTION_URL=${{ vars.PAYMENT_INGESTION_URL }}
+            PAYMENT_PROCESSING_URL=${{ vars.PAYMENT_PROCESSING_URL }}
             PAYMENT_WEBSOCKET_NOTIFICATION=${{ vars.PAYMENT_WEBSOCKET_NOTIFICATION }}
             
 
