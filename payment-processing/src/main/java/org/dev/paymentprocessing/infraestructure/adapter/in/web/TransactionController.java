@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/transactions")
 @Tag(name = "Transactions", description = "Transaction operations")
-//@CrossOrigin(origins = "*", allowedHeaders = "*")
+//@CrossOrigin(origins = "*", allowedHeaders = "*") // Enable CORS to localhost for testing
 public class TransactionController {
     private final ITransactionServicePort transactionService;
 

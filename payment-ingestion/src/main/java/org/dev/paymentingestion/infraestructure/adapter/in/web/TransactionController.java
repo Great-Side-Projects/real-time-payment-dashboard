@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/transactions")
 @Tag(name = "Transactions", description = "Transaction operations")
+//@CrossOrigin(origins = "*", allowedHeaders = "*") // Enable CORS to localhost for testing
 public class TransactionController {
     private final ITransactionServicePort transactionService;
 
@@ -36,7 +37,6 @@ public class TransactionController {
     @ApiResponse(responseCode = "400", description = "Invalid input")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/process")
-    //@CrossOrigin(origins = "*", allowedHeaders = "*")
     public void processTransaction(
             @RequestBody
             @Parameter(description = "List of transactions")
