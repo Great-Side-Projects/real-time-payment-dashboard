@@ -12,7 +12,7 @@
     <img src="./images/logo.png" alt="Logo" width="300" height="">
   </a>
 
-<h3 align="center">Advanced Real-Time Payment Processing Dashboard</h3>
+<h1 align="center">Advanced Real-Time Payment Processing Dashboard</h1>
 
   <p align="center">
     The real-time payment processing dashboard is a project to process transactions (Batch or unit) in real-time and show the data in a dashboard. The project is could be used to monitor the transactions in real-time, real-tine notification (fraud detection) and real-time analytics.
@@ -228,22 +228,22 @@ This is an example of how to list things you need to use the software and how to
    - https://github.com/Great-Side-Projects/elastic-stack/blob/main/logstash/pipeline/mysql-to-elasticsearch.conf
    
    **You can create your own ELK** https://github.com/Great-Side-Projects/elastic-stack/tree/main
-   ```shell
+   ```properties
    # kafka-to-elasticsearch.conf
     input {
       kafka {
-      bootstrap_servers => "172.17.0.1:9092"
-      topics => ["TRANSACTIONS_PER_USER", "TRANSACTIONS_PER_MINUTE", "TRANSACTION_SUMMARY"]
-      codec => "json"
-      decorate_events => basic
-      consumer_threads => 3
-      # Configuración de autenticación SASL/PLAIN
-      sasl_mechanism => "PLAIN"
-      security_protocol => "SASL_PLAINTEXT"  # Cambia a "SASL_SSL" si es necesario
-      sasl_jaas_config => "org.apache.kafka.common.security.plain.PlainLoginModule required username='${KAFKA_USERNAME}' password='${KAFKA_PASSWORD}';"
-      # Opciones adicionales
-      group_id => "logstash-consumer-group"  # Define un grupo de consumidores para Logstash
-      auto_offset_reset => "earliest"  # Comienza desde el principio si no hay offsets almacenados
+        bootstrap_servers => "${KAFKA_BOOTSTRAP_SERVERS}"
+        topics => ["TRANSACTIONS_PER_USER", "TRANSACTIONS_PER_MINUTE", "TRANSACTION_SUMMARY"]
+        codec => "json"
+        decorate_events => basic
+        consumer_threads => 3
+        # Configuración de autenticación SASL/PLAIN
+        sasl_mechanism => "PLAIN"
+        security_protocol => "SASL_PLAINTEXT"  # Cambia a "SASL_SSL" si es necesario
+        sasl_jaas_config => "org.apache.kafka.common.security.plain.PlainLoginModule required username='${KAFKA_USERNAME}' password='${KAFKA_PASSWORD}';"
+        # Opciones adicionales
+        group_id => "logstash-consumer-group"  # Define un grupo de consumidores para Logstash
+        auto_offset_reset => "earliest"  # Comienza desde el principio si no hay offsets almacenados
       }
     }
     
@@ -323,7 +323,7 @@ This is an example of how to list things you need to use the software and how to
    ```
    
 7. Modify variables environment kafka, cassandra, rabbitmq, mysql and kibana in the .env file.
-   ```dotenv
+   ```properties
    #.env
    KAFKA_BOOTSTRAP_SERVERS=localhost:9092 #kafka cluster
    KAFKA_PROPERTIES_SASL_JAAS_CONFIG="org.apache.kafka.common.security.plain.PlainLoginModule required username='user' password='pass';" #user and password for kafka cluster
