@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  payment-ingestion:
+    build:
+      context: ./payment-ingestion
+      dockerfile: Dockerfile_ingestion
+      args:
+        - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+        - KAFKA_PROPERTIES_SASL_JAAS_CONFIG=${KAFKA_PROPERTIES_SASL_JAAS_CONFIG}
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  payment-processing:
+    depends_on:
+      - payment-ingestion
+    build:
+      context: ./payment-processing
+      dockerfile: Dockerfile_processing
+      args:
+        - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+        - KAFKA_PROPERTIES_SASL_JAAS_CONFIG=${KAFKA_PROPERTIES_SASL_JAAS_CONFIG}
+        - CASSANDRA_CONTACT_POINTS=${CASSANDRA_CONTACT_POINTS}
+        - CASSANDRA_PORT=${CASSANDRA_PORT}
+        - CASSANDRA_KEYSPACE_NAME=${CASSANDRA_KEYSPACE_NAME}
+        - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+        - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
+        - CASSANDRA_LOCAL_DATACENTER=${CASSANDRA_LOCAL_DATACENTER}
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+  payment-notification-hubs:
+    depends_on:
+      - payment-ingestion
+    build:
+      context: ./payment-notification-hubs
+      dockerfile: Dockerfile_notification_hubs
+      args:
+        - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+        - KAFKA_PROPERTIES_SASL_JAAS_CONFIG=${KAFKA_PROPERTIES_SASL_JAAS_CONFIG}
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+
+  payment-log:
+    build:
+      context: ./payment-log
+      dockerfile: Dockerfile_log
+      args:
+        - DATASOURCE_URL=${DATASOURCE_URL}
+        - DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+        - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+
+  payment-websocket-notification:
+    build:
+      context: ./payment-websocket-notification
+      dockerfile: Dockerfile_websocket_notification
+      args:
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    ports:
+      - "8084:8084"
+    networks:
+      - app-network
+
+  payment-client-ui:
+    depends_on:
+      - payment-ingestion
+    build:
+      context: ./payment-client-ui
+      dockerfile: Dockerfile_client_ui
+      args:
+        - KIBANA_DASHBOARD_URL=${KIBANA_DASHBOARD_URL}
+        - PAYMENT_INGESTION_URL=${PAYMENT_INGESTION_URL}
+        - PAYMENT_PROCESSING_URL=${PAYMENT_PROCESSING_URL}
+        - PAYMENT_WEBSOCKET_NOTIFICATION=${PAYMENT_WEBSOCKET_NOTIFICATION}
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
