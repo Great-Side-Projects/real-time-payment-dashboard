@@ -496,7 +496,7 @@ real-time-payment-dashboard
 [product-screenshot-UI]: images/screenshotUI.png
 [DockerImage]: https://img.shields.io/badge/Docker-0db7ed?style=for-the-badge&logo=docker&logoColor=white
 [architecture-diagram]: images/architecture-diagram1.png
-[architecture-diagram2]: images/architecture-diagram2.png
+[architecture-diagram2]: images/architecture-diagram2.svg
 [product-screenshot-UI2]: images/screenshotUI2.png
 [product-screenshot-UI3]: images/screenshotUI3.png
 [product-screenshot-UI4]: images/screenshotUI4.png
