@@ -17,7 +17,7 @@
   <p align="center">
     The real-time payment processing dashboard is a project to process transactions (Batch or unit) in real-time and show the data in a dashboard. The project is could be used to monitor the transactions in real-time, real-tine notification (fraud detection) and real-time analytics.
     <br />
-    <a href="https://kafka.apache.org/documentation/"><strong>Explore the docs »</strong></a>
+    <a href=""><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://payment-client-ui.azurewebsites.net/">View Demo</a>
