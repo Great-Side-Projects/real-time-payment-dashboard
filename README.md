@@ -68,6 +68,11 @@ The main idea is simulating a real-time payment processing system, where the tra
 
 Thank you for reviewing the project. I hope you enjoy it.
 
+### Requirements
+
+[![Advanced Real-Time Payment Processing Dashboard]]()
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
@@ -218,7 +223,7 @@ This is an example of how to list things you need to use the software and how to
      just run curl commands in the terminal kafka cluster.
 
 
-4. add in you logstash pipeline the following configuration to ingest the data from the Kafka topic (KsqlDB) and the data from the MySQL logs.
+4. Add in your logstash pipeline the following configuration to ingest the data from the Kafka topic (KsqlDB) and the data from the MySQL logs.
    - https://github.com/Great-Side-Projects/elastic-stack/blob/main/logstash/pipeline/kafka-to-elasticsearch.conf
    - https://github.com/Great-Side-Projects/elastic-stack/blob/main/logstash/pipeline/mysql-to-elasticsearch.conf
    
@@ -307,7 +312,7 @@ This is an example of how to list things you need to use the software and how to
    public class TransactionController {
    ```
 
-6. in terminal generate a .jar file for each service
+6. In terminal generate a .jar file for each service
 
    ```sh
    mvn -f ./payment-ingestion/pom.xml --batch-mode --update-snapshots package -DskipTests
@@ -356,9 +361,14 @@ This is an example of how to list things you need to use the software and how to
     ```
    You can see the logs of the services in the terminal
 
-9. yeah! the project is running in your local environment, you can see UI in the browser:
+
+9. Import kibana dashboard in your kibana, you can use the file kibana_dashboard.ndjson in the root folder of the project.
+   - https://www.skedler.com/blog/easy-way-export-import-dashboards-searches-visualizations-kibana/
+   
+
+10. yeah! the project is running in your local environment, you can see UI in the browser:
     - http://localhost:3000/
-10. Enjoy!
+11. Enjoy!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -443,7 +453,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Angel Morales - [LinkedIn](https://www.linkedin.com/in/angelmoralesb/) - angelmoralesb@gmail.com
 
-Project Link: [https://github.com/Great-Side-Projects/kafka](https://github.com/Great-Side-Projects/real-time-payment-dashboard)
+Project Link: [https://github.com/Great-Side-Projects/Owner avatar
+real-time-payment-dashboard
+](https://github.com/Great-Side-Projects/real-time-payment-dashboard)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -492,6 +504,7 @@ Project Link: [https://github.com/Great-Side-Projects/kafka](https://github.com/
 [product-screenshot-UI6]: images/screenshotUI6.png
 [product-HA]: images/HA.webp
 [product-ksql-flow]: images/ksqldb_flow.png
+[Advanced Real-Time Payment Processing Dashboard]: /images/Advanced%20Real-Time%20Payment%20Processing%20Dashboard.png
 
 
 
