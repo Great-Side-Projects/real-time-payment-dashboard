@@ -134,7 +134,7 @@ Professional version: 2 months (executed through a web interface)
 All the services are designed to be scalable and to be able to process a large number of transactions in real-time. The services are designed to be fault-tolerant and to be able to recover from failures. **The services are designed to be secure and to be able to protect the data from unauthorized access.
 
 - Nota: ** -> work in progress
-
+ 
 1. **payment-ingestion**: This service is responsible for ingesting the payment data in batch or single transaction and sending it to the distributed streaming platform (Kafka topic payment) it can be used to ingest the data from the payment client or from the payment file (with a little modification). 
    
 2. **kafka topic payment**: This topic is responsible for storing the payment data in real-time and sending the data to consumers payment-processing and payment-notification-hub, this consumers has a group id diferent to process the data in parallel. That is to say, each consumer has a copy of the data to process it independently.
