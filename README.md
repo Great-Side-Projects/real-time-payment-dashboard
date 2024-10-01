@@ -67,6 +67,9 @@ I initially had only 5 days for the test to build the first version of the proje
 The main idea is simulating a real-time payment processing system, where the transactions are processed in real-time and the data is shown in a dashboard. The project is designed to be scalable and to be able to process a large number of transactions in real-time.
 
 Thank you for reviewing the project. I hope you enjoy it.
+* ### Kibana dashboard access (read only): 
+  - Username: guest
+  - Password: Guest+123
 
 ### Requirements
 
