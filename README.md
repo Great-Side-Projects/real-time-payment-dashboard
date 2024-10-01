@@ -419,8 +419,7 @@ This is an example of how to list things you need to use the software and how to
 - [ ] Implement Registration and Discovery with Eureka or Consul
   
 
-See the [open issues](https://github.com/Great-Side-Projects/Owner avatar
-real-time-payment-dashboard/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Great-Side-Projects/real-time-payment-dashboard/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -453,8 +452,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Angel Morales - [LinkedIn](https://www.linkedin.com/in/angelmoralesb/) - angelmoralesb@gmail.com
 
-Project Link: [https://github.com/Great-Side-Projects/Owner avatar
-real-time-payment-dashboard
+Project Link: [https://github.com/Great-Side-Projects/real-time-payment-dashboard
 ](https://github.com/Great-Side-Projects/real-time-payment-dashboard)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
