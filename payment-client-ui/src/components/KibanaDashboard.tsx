@@ -9,7 +9,7 @@ export default function KibanaDashboard() {
       <CardContent>
         <iframe
           src={process.env.NEXT_PUBLIC_KIBANA_DASHBOARD_URL}
-          className="w-full h-[1450px] border-0"
+          className="w-full h-[1490px] border-0"
           title="Kibana Dashboard"
         />
       </CardContent>
