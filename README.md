@@ -57,7 +57,7 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
-## About The Project+
+## About The Project
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=KyK444FgsNs">
