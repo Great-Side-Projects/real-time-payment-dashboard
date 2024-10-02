@@ -1,23 +1,21 @@
 package org.dev.paymentnotificationhubs.application.notificationstrategy;
 
-import org.dev.paymentnotificationhubs.application.INotificationStrategy;
+import org.dev.paymentnotificationhubs.application.INotificationRuleStrategy;
 import org.dev.paymentnotificationhubs.domain.Transaction;
+import org.dev.paymentnotificationhubs.domain.TransactionStatusEnum;
 
-
-public class HighAmountNotificationStrategy implements INotificationStrategy {
-
-    private final int AMOUNT_1000 = 1000;
+public class FailureNotificationRuleStrategy implements INotificationRuleStrategy {
 
     @Override
     public boolean applies(Transaction transaction) {
-        return transaction.getAmount() > AMOUNT_1000;
+        return transaction.getStatus().equals(TransactionStatusEnum.FAILURE.toString());
     }
 
     @Override
     public String getMessage(Transaction transaction) {
         return """
                 {
-                 "notificationtype": "highamountnotification",
+                 "notificationtype": "failurenotification",
                  "eventid": "%s",
                 """ + transaction.toString() + """     
                 }
