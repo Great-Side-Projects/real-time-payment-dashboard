@@ -59,7 +59,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project+
 
-[![Advanced Real-Time Payment Processing Dashboard](https://img.youtube.com/vi/KyK444FgsNs/0.jpg)](https://www.youtube.com/watch?v=KyK444FgsNs)
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=KyK444FgsNs">
+    <img src="https://img.youtube.com/vi/KyK444FgsNs/0.jpg" alt="Advanced Real-Time Payment Processing Dashboard">
+  </a>
+</p>
 
 [![Product Name Screen Shot][product-screenshot-UI]](https://payment-client-ui.azurewebsites.net/)
 
