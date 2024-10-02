@@ -15,7 +15,7 @@
 <h1 align="center">Advanced Real-Time Payment Processing Dashboard</h1>
 
   <p align="center">
-    The real-time payment processing dashboard is a project to process transactions (Batch or unit) in real-time and show the data in a dashboard. The project is could be used to monitor the transactions in real-time, real-tine notification (fraud detection) and real-time analytics.
+    The real-time payment processing dashboard is a project to process transactions (Batch or unit) in real-time and show the data in a dashboard. The project it could be used to monitor the transactions in real-time, real-tine notification (fraud detection) and real-time analytics.
     <br />
     <a href=""><strong>Explore the docs »</strong></a>
     <br />
@@ -57,7 +57,9 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About The Project+
+
+[![Advanced Real-Time Payment Processing Dashboard](https://img.youtube.com/vi/KyK444FgsNs/0.jpg)](https://www.youtube.com/watch?v=KyK444FgsNs)
 
 [![Product Name Screen Shot][product-screenshot-UI]](https://payment-client-ui.azurewebsites.net/)
 
