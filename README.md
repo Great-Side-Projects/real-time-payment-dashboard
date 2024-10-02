@@ -152,8 +152,11 @@ All the services are designed to be scalable and to be able to process a large n
 
 3. **payment-processing**: This service is responsible for processing the payment data in real-time from the distributed streaming platform (Kafka topic payment) and storing the data in the database (Cassandra), also sending the log data to the log queue (RabbitMQ-paymentprocessing_log). the logs ware implemented with AOP.
 
+   - design pattern used: Builder pattern (Transaction search filter) [![Builder pattern]](https://refactoring.guru/es/design-patterns/builder) 
+
 4. **payment-notification-hub**: This service is responsible for evaluating the payment (Bussiness Rules) data in real-time, for example, high amount or failure transaction and sending the transaction to the especific type notification, websocket, email, sms, etc. in this case, the notification is websocket type and sent to a queue (RabbitMQ-paymentwebsocket_notification) to be notified by payment-websocket-notification service.
-  
+   - design pattern used: Strategy pattern (Notification Rule) [![Strategy pattern]](https://refactoring.guru/es/design-patterns/strategy)
+
 5. **payment-websocket-notification**: This service is responsible for receiving the notification from the payment-notification-hub (RabbitMQ-paymentwebsocket_notification) and sending the notification to the websocket client (payment-client-ui) to show the notification in real-time, also sending the log data to the log queue (RabbitMQ-paymentprocessing_log). the logs ware implemented with AOP.
    
 6. **payment-log**: This service is responsible for ingesting the log data from the (RabbitMQ-paymentprocessing_log) in MySQL, in batch or single. 
@@ -426,6 +429,7 @@ This is an example of how to list things you need to use the software and how to
 - [ ] Substitute Telebit Cloud for Azure App Service (Kibana) or another service
 - [ ] Handle the data validation in the frontend
 - [ ] Implement Registration and Discovery with Eureka or Consul
+- [ ] Implement a better way to notification rules (Rule Engine) in the payment-notification-hub
   
 
 See the [open issues](https://github.com/Great-Side-Projects/real-time-payment-dashboard/issues) for a full list of proposed features (and known issues).
@@ -512,23 +516,6 @@ Project Link: [https://github.com/Great-Side-Projects/real-time-payment-dashboar
 [product-HA]: images/HA.webp
 [product-ksql-flow]: images/ksqldb_flow.png
 [Advanced Real-Time Payment Processing Dashboard]: /images/Advanced%20Real-Time%20Payment%20Processing%20Dashboard.png
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[Strategy pattern]: https://refactoring.guru/images/patterns/diagrams/strategy/solution-2x.png
+[Builder pattern]: https://refactoring.guru/images/patterns/diagrams/builder/structure-2x.png
 
