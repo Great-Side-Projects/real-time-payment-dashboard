@@ -47,7 +47,7 @@ public class Transaction {
     @Override
     public String toString() {
         return """
-                "Transaction":{"id": "%s", "userid": "%s", "amount": %f, "status": "%s", "time": "%s", "location": "%s"}"""
+                "transaction":{"id": "%s", "userid": "%s", "amount": %f, "status": "%s", "time": "%s", "location": "%s"}"""
                 .formatted(id, userid, amount, status, time, location);
     }
 }
